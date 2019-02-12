@@ -1,0 +1,269 @@
+html {
+  margin: 0px;
+  overflow-y: scroll;
+  height: 100%;
+}
+
+body {
+  margin: 0px;
+  height: 100%;
+}
+
+a img {
+  outline: none;
+  border: none;
+}
+
+.icon-loading {
+  background-image: url("loading.gif");
+  background-repeat: no-repeat;
+  background-position: center 0px;
+  display: inline-block;
+  width: 24px;
+  height: 16px;
+}
+
+@media screen and (min-width: 600px) {
+  .compact-only {
+    display: none;
+  }
+}
+
+.left-column {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 200px;
+  padding: 10px;
+  height: 100%;
+  z-index: 15;
+  background-color: white;
+  text-align: center;
+  overflow: auto;
+}
+.left-column.sidebar_out {
+  left: 0px;
+}
+.left-column .logo {
+  width: 171px;
+  height: 127px;
+}
+.left-column .nav {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-align: left;
+  clear: both;
+}
+.left-column .nav .is_me {
+  background-color: #f0f0f0;
+}
+@media screen and (max-width: 600px) {
+  .left-column {
+    left: -220px;
+    border-right: 1px solid #e6e6e6;
+    background-color: #fafafa;
+  }
+  .left-column .logo {
+    width: 145px;
+    height: auto;
+    margin-left: -15px;
+  }
+}
+.left-column .btn {
+  width: 170px;
+  margin-bottom: 10px;
+}
+.left-column .btn i {
+  margin-right: 3px;
+  margin-left: -10px;
+}
+.left-column .compact-only {
+  width: auto;
+  float: right;
+}
+.left-column .compact-only i {
+  margin: auto;
+}
+
+.right-column, .title-bar, .chat-box {
+  width: 530px;
+}
+@media screen and (min-width: 1000px) {
+  .right-column, .title-bar, .chat-box {
+    width: 742px;
+  }
+}
+@media screen and (max-width: 767px) {
+  .right-column, .title-bar, .chat-box {
+    width: 353.3333333333px;
+  }
+}
+@media screen and (max-width: 365px) {
+  .right-column, .title-bar, .chat-box {
+    width: 291.5px;
+  }
+}
+
+.right-column {
+  position: absolute;
+  top: 0px;
+  left: 225px;
+  height: 100%;
+}
+@media screen and (max-width: 600px) {
+  .right-column {
+    left: 5px;
+  }
+}
+
+.title-bar {
+  position: fixed;
+  top: 0px;
+  height: 60px;
+  background-color: rgba(255, 255, 255, 0.85);
+  z-index: 10;
+  line-height: 60px;
+  /*
+  @media screen and (min-width: $narrow) {
+  	h1 {
+  		font-size: 50px;
+  		height: 80px;
+  		line-height: 80px;
+  	}
+  }
+  */
+}
+.title-bar h1 {
+  display: inline;
+  font-size: 25px;
+  padding-left: 5px;
+}
+.title-bar button {
+  margin: 0px 5px 10px 5px;
+}
+
+.messages-box {
+  position: relative;
+  top: 100px;
+  padding-bottom: 80px;
+  color: #646464;
+}
+.messages-box .message {
+  border-bottom: 1px solid #e6e6e6;
+  padding: 3px 0px;
+}
+.messages-box .message .sender {
+  overflow: hidden;
+}
+.messages-box .message .sender small {
+  opacity: 0.75;
+}
+.messages-box .message .sender small:before {
+  content: " ";
+  display: inline;
+}
+@media screen and (max-width: 767px) {
+  .messages-box .message .sender small {
+    float: right;
+    display: inline;
+  }
+}
+.messages-box .message .message-text {
+  margin-left: 0px;
+}
+@media screen and (max-width: 767px) {
+  .messages-box .is_me .message-text {
+    text-align: right;
+  }
+}
+.messages-box .icon-loading {
+  width: 99%;
+}
+
+.chat-box {
+  margin: 0px;
+  position: fixed;
+  bottom: 0px;
+  background-color: white;
+  padding-top: 5px;
+  text-align: center;
+}
+.chat-box textarea {
+  max-height: 50px;
+  min-height: 50px;
+  max-width: 380px;
+  min-width: 380px;
+  padding: 5px;
+}
+@media screen and (min-width: 1000px) {
+  .chat-box textarea {
+    max-width: 592px;
+    min-width: 592px;
+  }
+}
+@media screen and (max-width: 767px) {
+  .chat-box textarea {
+    max-width: 253.3333333333px;
+    min-width: 253.3333333333px;
+  }
+}
+@media screen and (max-width: 365px) {
+  .chat-box textarea {
+    max-width: 211.5px;
+    min-width: 211.5px;
+  }
+}
+.chat-box input[type=submit] {
+  width: 130px;
+  float: right;
+  height: 62px;
+}
+@media screen and (max-width: 767px) {
+  .chat-box input[type=submit] {
+    width: 80px;
+  }
+}
+@media screen and (max-width: 365px) {
+  .chat-box input[type=submit] {
+    width: 60px;
+  }
+}
+.chat-box .btn-large {
+  margin-bottom: 10px;
+}
+
+.color-0 {
+  color: maroon !important;
+}
+
+.color-1 {
+  color: #4a8000 !important;
+}
+
+.color-2 {
+  color: #00806a !important;
+}
+
+.color-3 {
+  color: #003c80 !important;
+}
+
+.color-4 {
+  color: #805900 !important;
+}
+
+.color-5 {
+  color: #008011 !important;
+}
+
+@media screen and (min-width: 768px) {
+  .modal {
+    width: 400px;
+  }
+}
+.modal .username {
+  width: 95%;
+}
+
+/*# sourceMappingURL=style.css.map */

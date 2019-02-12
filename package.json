@@ -1,0 +1,40 @@
+{
+  "name": "chatsafe",
+  "version": "0.2.0",
+  "description": "ChatSafe Encrypted Instant Messaging App",
+  "scripts": {
+    "start": "set DEBUG=SafeChat:* & nodemon server",
+    "watch": "nodemon server && mongod"
+  },
+  "keywords": [
+    "Node.js",
+    "application",
+    "chat",
+    "IM",
+    "secure",
+    "encrypted"
+  ],
+  "author": {
+    "name": "David Timms",
+    "email": "davidtimms@btinternet.com",
+    "url": "http://www.davidtimms.co.uk"
+  },
+  "homepage": "http://www.davidtimms.co.uk",
+  "engines": {
+    "node": ">= 0.6.0",
+    "npm": ">= 1.0.0"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "handlebars": "^4.0.12",
+    "angular": "1.7.x",
+    "bootstrap": "3.3.x",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
+  },
+  "bundleDependencies": [],
+  "private": true,
+  "main": "server.js"
+}
