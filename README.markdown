@@ -1,3 +1,12 @@
+Project largely based on Tim's ChatSafe so following is his readme...
+
+I've simply adapted it to work with lastest vesions of the libs.
+
+oliduha
+
+
+#####################################################################
+
 #ChatSafe
 
 A secure chat room service based on Node.js, Socket.io and AngularJS with AES encryption
