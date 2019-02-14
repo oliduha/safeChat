@@ -15,7 +15,8 @@ var ChatApp = function() {
     self.setupVariables = function() {
         //  Set the environment variables we need.
         self.ipaddress = process.env.OPENSHIFT_INTERNAL_IP || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
-        self.port      = process.env.OPENSHIFT_INTERNAL_PORT || process.env.OPENSHIFT_NODEJS_IP || 8000;
+        self.port      = process.env.OPENSHIFT_INTERNAL_PORT || process.env.OPENSHIFT_NODEJS_IP || 8043;
+        self.httpport  = 8080;
 
         if (typeof self.ipaddress === "undefined") {
             //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
@@ -118,14 +119,12 @@ var ChatApp = function() {
             if (slice_point >= 0) {
                 if (self.chats[chat_url]) {
                     res.send({error: 'That chat name is already in use'});
-                }
-                else {
+                } else {
                     var chat_name = chat_url.split('_').join(' ');
                     self.chats[chat_url] = self.createChat(chat_name);
                     res.send({redirect: chat_url});
                 }
-            }
-            else {
+            } else {
                 res.send({error: 'No chat name specified in ' + req.url});
             }
         };
@@ -154,8 +153,7 @@ var ChatApp = function() {
             console.log(chat_url + ' requested');
             if (self.chats[chat_url]) {
                 self.createStaticRoute('chat.html')(req, res);
-            }
-            else {
+            } else {
                 res.status(302);
                 console.log('redirecting to https://' + req.headers.host);
                 res.setHeader('Location', 'https://' + req.headers.host);
@@ -179,8 +177,7 @@ var ChatApp = function() {
                 if (err) {
                     console.log('Unable to read file ' + uncached_file);
                     res.send("");
-                }
-                else {
+                } else {
                     res.send(data);
                 }
             });
@@ -237,12 +234,10 @@ var ChatApp = function() {
                     if (self.chats[data.chat_url].locked) {
                         socket.emit('chat locked');
                         socket.emit('new message', {text: 'Sorry, this chat is locked'});
-                    }
-                    else {
+                    } else {
                         socket.emit('chat unlocked');
                     }
-                }
-                else {
+                } else {
                     console.log('bad request');
                 }
             });
@@ -253,12 +248,10 @@ var ChatApp = function() {
                         if (chat.locked) {
                             socket.emit('callback', 'join chat',
                                 {accepted: false, error: 'Sorry, the chat has been locked'});
-                        }
-                        else if (chat.chatters.get(data.name)) {
+                        } else if (chat.chatters.get(data.name)) {
                             socket.emit('callback', 'join chat',
                                 {accepted: false, error: 'Sorry, the username ' + data.name + ' is already in use'});
-                        }
-                        else {
+                        } else {
                             console.log(data.name + ' joined the chat');
                             socket.chatter =  new chat.Chatter(data);
                             socket.join(chat.chat_name);
@@ -269,8 +262,7 @@ var ChatApp = function() {
                             socket.emit('callback', 'join chat', {accepted: true});
                             self.setupEvents(socket, chat);
                         }
-                    }
-                    else {
+                    } else {
                         socket.emit('callback', 'join chat',
                             {accepted: false, error: 'Sorry, the chat no longer exists'});
                     }
@@ -285,14 +277,14 @@ var ChatApp = function() {
     self.setupEvents = function (socket, chat) {
         socket.on('new message', function (data) {
             self.io.of('/').in(chat.chat_name).clients(function(error,clients){
-                console.log('connections: ' + clients.length);
+            console.log('connections: ' + clients.length);
             });
             // console.log('connections: ' + self.io.of('/').in(chat.chat_name).clients);
             var message = new chat.Message(data);
             self.io.sockets.to(chat.chat_name).emit('new message', data);
         });
         var disconnect = function() {
-                            console.log('disconnect');
+            console.log('disconnect');
             if (socket.chatter) {
                 var name = socket.chatter.name;
                 var message = new chat.Message({text: name + ' has left the chat'});
@@ -340,6 +332,20 @@ var ChatApp = function() {
         };
         keys_dir = 'keys/';
         self.server = require('https').createServer(svrOptions,self.app);
+        self.serverhttp = require('http').createServer(self.app);
+
+        self.app.use(function(req, res, next) {
+            if (req.secure) {
+                next();
+            } else {
+                console.log(req.headers.host);
+                var slice_point = req.headers.host.lastIndexOf(':');
+                var host = req.headers.host.slice(0, slice_point);
+                console.log('requested: http://' + req.headers.host + ' -> redirected to: https://' + host + ':' + self.port);
+                res.redirect('https://' + host + ':' + self.port);
+            }
+        });
+
         // console.log("BEFORE");
         self.io = require('socket.io').listen(self.server);
         // console.log("AFTER");
@@ -374,8 +380,12 @@ var ChatApp = function() {
     self.start = function() {
         //  Start the app on the specific interface (and port).
         self.server.listen(self.port, self.ipaddress, function() {
-            console.log('%s: Node server started on %s:%d ...',
+            console.log('%s: Node server https started on %s:%d ...',
                         Date(Date.now() ), self.ipaddress, self.port);
+        });
+        self.serverhttp.listen(self.httpport, self.ipaddress, function() {
+            console.log('%s: Node server http started on %s:%d ...',
+                        Date(Date.now() ), self.ipaddress, self.httpport);
         });
     };
 
