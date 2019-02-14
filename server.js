@@ -193,6 +193,7 @@ var ChatApp = function() {
             if (mime_type === undefined) {
                 mimeType = "text/plain";
             }
+            console.log(static_file, mime_type);
             res.setHeader('Content-Type', mime_type);
             res.send(self.cache_get(static_file));
         };
@@ -207,7 +208,9 @@ var ChatApp = function() {
                         png: "image/png",
                         jpg: "image/jpeg",
                         jpeg: "image/jpeg",
-                        gif: "image/gif"};
+                        gif: "image/gif",
+                        ico: "image/x-icon"
+                    };
 
 
     self.removeFileExtension = function (file_name) {
@@ -220,7 +223,7 @@ var ChatApp = function() {
 
     self.createChat = function (chat_name) {
         var chat = makeChat({server: true, chat_name: chat_name});
-        console.log(chat);
+        //console.log(chat);
         chat.systemMessage('Chat created', self.io);
         return chat;
     };

@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB" ng-app>
-
 <head>
-	<title>ChatSafe</title>
+	<title>SafeChat</title>
+	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!--<link href="bootstrap-combined.min.css" rel="stylesheet">-->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
 	 crossorigin="anonymous" />
 	<link rel="stylesheet" href="style.css" />
-	<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 	 crossorigin="anonymous"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
@@ -18,13 +17,13 @@
 	<script src="chat.js"></script>
 </head>
 
-<body>
+<body ng-app>
 	<div class="container" ng-controller="Chat">
 
 		<div class="left-column">
 			<button class="btn compact-only" ng-click="hideSidebar()"><i class="icon-chevron-left"></i></button>
-			<img src="chatsafe.png" class="logo" />
-			<ul class="nav nav-tabs nav-stacked">
+			<img src="safechat.png" class="logo" alt="logo SafeChat" />
+			<ul class="nav nav-tabs">
 				<li ng-repeat="chatter in chatters">
 					<a class="color-{{chatter.id % 6}} {{chatter.isMe()}}">{{chatter.name}}</a> 
 				</li>
@@ -81,8 +80,8 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 						<h3>Set Username</h3>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
 					<div class="modal-body">
 						<div class="alert alert-error" ng-show="username_error">{{username_error}}</div>
@@ -101,8 +100,8 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 						<h3>{{confirm_modal.title}}</h3>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
 					<div class="modal-body">
 						{{confirm_modal.message}}
@@ -116,5 +115,4 @@
 		</div>
 	</div>
 </body>
-
 </html>

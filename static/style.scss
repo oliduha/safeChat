@@ -56,7 +56,13 @@ a img {
 		text-align: left;
 		clear: both;
 		.is_me {
-			background-color: rgb(240, 240, 240);
+			background-color: rgb(255, 220, 0);
+		}
+		li {
+			margin-right: 2px;
+			a {
+				padding: 0 2px;
+			}
 		}
 	}
 	@media screen and (max-width: $hide-sidebar) {
@@ -149,7 +155,7 @@ a img {
 				}
 				@media screen and (max-width: $narrow) {
 					float: right;
-					display: inline;
+					//display: inline;
 				}
 			}
 		}
@@ -210,22 +216,22 @@ a img {
 	}
 }
 .color-0 {
-	color: hsl(0, 100%, 25%) !important;
+	color: rgb(127, 0, 0) !important;
 }
 .color-1 {
-	color: hsl(85, 100%, 25%) !important;
+	color: rgb(74, 127, 0) !important;
 }
 .color-2 {
-	color: hsl(170, 100%, 25%) !important;
+	color: rgb(0, 74, 127) !important;
 }
 .color-3 {
-	color: hsl(212, 100%, 25%) !important;
+	color: rgb(127, 0, 127) !important;
 }
 .color-4 {
-	color: hsl(42, 100%, 25%) !important;
+	color: rgb(0, 127, 74) !important;
 }
 .color-5 {
-	color: hsl(128, 100%, 25%) !important;
+	color: rgb(127, 74, 0) !important;
 }
 .modal {
 	@media screen and (min-width: 768px) {

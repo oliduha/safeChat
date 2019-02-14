@@ -56,7 +56,13 @@ a img {
   clear: both;
 }
 .left-column .nav .is_me {
-  background-color: #f0f0f0;
+  background-color: #ffdc00;
+}
+.left-column .nav li {
+  margin-right: 2px;
+}
+.left-column .nav li a {
+  padding: 0 2px;
 }
 @media screen and (max-width: 600px) {
   .left-column {
@@ -166,7 +172,6 @@ a img {
 @media screen and (max-width: 767px) {
   .messages-box .message .sender small {
     float: right;
-    display: inline;
   }
 }
 .messages-box .message .message-text {
@@ -234,27 +239,27 @@ a img {
 }
 
 .color-0 {
-  color: maroon !important;
+  color: #7f0000 !important;
 }
 
 .color-1 {
-  color: #4a8000 !important;
+  color: #4a7f00 !important;
 }
 
 .color-2 {
-  color: #00806a !important;
+  color: #004a7f !important;
 }
 
 .color-3 {
-  color: #003c80 !important;
+  color: #7f007f !important;
 }
 
 .color-4 {
-  color: #805900 !important;
+  color: #007f4a !important;
 }
 
 .color-5 {
-  color: #008011 !important;
+  color: #7f4a00 !important;
 }
 
 @media screen and (min-width: 768px) {
