@@ -56,7 +56,9 @@ a img {
 		text-align: left;
 		clear: both;
 		.is_me {
-			background-color: rgb(255, 220, 0);
+			background-color: rgb(240, 240, 240);
+			border: 1px solid rgb(120, 120, 120);
+			border-radius: 3px;
 		}
 		li {
 			margin-right: 2px;
@@ -149,7 +151,7 @@ a img {
 			overflow: hidden;
 			small {
 				opacity: 0.75;
-				&:before {
+				&:after {
 					content: " ";
 					display: inline;
 				}
@@ -161,6 +163,20 @@ a img {
 		}
 		.message-text {
 			margin-left: 0px;
+			input {
+				width:93%;
+			}
+			button#btn-copy {
+				width: 5%;
+				padding: 0;
+				height: 24px;
+				margin-bottom: 5px;
+			}
+			button > img {
+				width: 16px;
+				height: 16px;
+				margin-bottom: 5px;
+			}
 		}
 	}
 	.is_me {

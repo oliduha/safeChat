@@ -12,8 +12,9 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
 	 crossorigin="anonymous"></script>
-	<script src="/socket.io/socket.io.js"></script>
+	<script src="/socket.io/socket.io.js" crossorigin="anonymous"></script>
 	<script src="gibberish-aes-1.0.0.min.js"></script>
+	<script src="sodium.js"></script>
 	<script src="chat.js"></script>
 </head>
 
@@ -41,7 +42,7 @@
 				<i class="icon-arrow-left"></i> Leave Chat
 			</button><br />
 			<a class="hidden" href="#username_modal" ng-show="my_username" data-toggle="modal">
-				Change Username
+				Change User Name
 			</a>
 		</div>
 
@@ -56,13 +57,14 @@
 				<div class="message row-fluid" ng-hide="messages.length > 0">
 					<div class="message-text">
 						Securely send this address to the people you want to chat with: <br /><br />
-						<input type="text" style="width: 97%" value="{{page_url}}" />
+						<input id="url-txt" type="text" style="width: 97%" value="{{page_url}}" />
+						<button id="btn-copy" class="btn" ng-click="copyUrl()"><img src="clippy.png" alt="copy URL" title="copy URL"/></button>
 					</div>
 				</div>
 				<div class="message row-fluid color-{{chatters.get(message.sender).id % 6}} {{chatters.get(message.sender).isMe()}}"
 				 ng-repeat="message in messages | orderBy: 'time'">
 					<strong class="sender span3">
-						<!--ng-hide="message.sender == undefined"-->{{message.sender}}<small>{{message.timeString()}}</small></strong>
+						<!--ng-hide="message.sender == undefined"--><small>{{message.timeString()}}</small>{{message.sender}}</strong>
 					<div class="message-text span9">{{message.text}}</div>
 				</div>
 			</div>
@@ -84,8 +86,8 @@
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
 					<div class="modal-body">
-						<div class="alert alert-error" ng-show="username_error">{{username_error}}</div>
-						<input class="username" type="text" placeholder="Type a username here" ng-model="new_username" ng-disabled="join_loading" />
+						<div class="alert alert-danger" ng-show="username_error">{{username_error}}</div>
+						<input class="username" type="text" placeholder="Type a user name here" ng-model="new_username" ng-disabled="join_loading" />
 					</div>
 					<div class="modal-footer">
 						<i class="icon-loading" ng-show="join_loading"></i>

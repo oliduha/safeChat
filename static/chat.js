@@ -99,6 +99,7 @@ function Chat($scope) {
 			console.log('emitting message: ' + text);
 			socket.emit('new message', {text: text});
 		}
+		console.log('emitting sys message: ' + text);
 	};
 	$scope.clearMessages = function () {
 		$scope.confirm(	'Clear all messages?', 
@@ -118,7 +119,9 @@ function Chat($scope) {
 	// Client-side only logic
 	$scope.clientConnection = function () {
 		document.title = $scope.chat_name + ' | ' + document.title;
-		socket = io.connect('https://' + window.location.hostname + ':8000',{ secure: true});
+		console.log('self.port', self.port);
+		console.log('https://' + window.location.hostname + ':' + (self.port || 8043));
+		socket = io.connect('https://' + window.location.hostname + ':' + (self.port || 8043), { secure: true});
 		socket.callback = {};
 		socket.emitWithCallback = function (name, data, callback) {
 			socket.emit(name, data);
@@ -168,8 +171,40 @@ function Chat($scope) {
 			    $scope.message_text = '';
 			    socket.emit('new message', message);
 			    message.text = original_text;
-		    }
+				}
+
+				/* var sEncrypt = function(msg, key) {
+						console.log('sodium msg to enc:', msg);
+						let nonce = sodium.randombytes_buf(sodium.crypto_secretbox_NONCEBYTES);
+						console.log('sodium enc nonce:', nonce);
+						let csb = sodium.crypto_secretbox_easy(msg, nonce, key);
+						console.log('sodium csb:', csb);
+						let res = new Uint8Array(nonce.length + csb.length);
+						res.set(nonce);
+						res.set(csb, nonce.length);
+						console.log("res:", sodium.to_hex(res));
+						return sodium.to_hex(res);
+				};
+
+				var sDecrypt = function(nonce_and_ciphertext, key) {
+						if (nonce_and_ciphertext.length < sodium.crypto_secretbox_NONCEBYTES + sodium.crypto_secretbox_MACBYTES) {
+								throw "Short message";
+						}
+						nonce_and_ciphertext = sodium.from_hex(nonce_and_ciphertext);
+						let nonce = nonce_and_ciphertext.slice(0, sodium.crypto_secretbox_NONCEBYTES),
+								ciphertext = nonce_and_ciphertext.slice(sodium.crypto_secretbox_NONCEBYTES);
+						return new TextDecoder("utf-8").decode(sodium.crypto_secretbox_open_easy(ciphertext, nonce, key));
+				}; */
+
+				let key = sodium.to_hex(sodium.crypto_generichash(16, sodium.from_string($scope.chat_name))); // works !
+				key = sodium.to_hex(sodium.randombytes_buf(16)); // works to !
+				console.log("key:", key.length, key);
+				var testSodium = $scope.sEncrypt('*A*B*C*0*1*2*', key);
+				console.log('sodium enc:', testSodium);
+				testSodium = $scope.sDecrypt(testSodium, key);
+				console.log('sodium dec:', testSodium);
 		};
+
 		// Send message on enter key
 		$('#message_textarea').keypress(function(event) {
 			if (event.which === 13) {
@@ -274,6 +309,15 @@ function Chat($scope) {
 									if (accepted) {
 										socket.emit('clear messages');
 										$scope.systemMessage('All messages cleared');
+									} else {
+										$scope.confirm(	'Don\'t clear messages?',
+												'Are you sure you don\'t want to delete all messages from the chat history before unlocking?', 
+												function (accepted) {
+													if(!accepted) {
+														socket.emit('clear messages');
+														$scope.systemMessage('All messages cleared');
+													}
+												});
 									}
 									socket.emit('unlock chat');
 								});
@@ -297,6 +341,39 @@ function Chat($scope) {
 				text = GibberishAES.dec(text.substring(11), $scope.key);
 			}
 			return text;
+		};
+
+		$scope.sEncrypt = function(txt, key) {
+			console.log('sodium msg to enc:', txt);
+			let nonce = sodium.randombytes_buf(sodium.crypto_secretbox_NONCEBYTES);
+			console.log('sodium enc nonce:', nonce);
+			let csb = sodium.crypto_secretbox_easy(txt, nonce, key);
+			console.log('sodium csb:', csb);
+			let arr = new Uint8Array(nonce.length + csb.length);
+			arr.set(nonce);
+			arr.set(csb, nonce.length);
+			let res = sodium.to_hex(arr);
+			console.log("res:", res);
+			return res;
+		};
+
+		$scope.sDecrypt = function(nct, key) {
+			if (nct) {
+				console.log('text to DEC:', nct);
+			} else {
+				return '';
+			}
+			if (nct.length < sodium.crypto_secretbox_NONCEBYTES + sodium.crypto_secretbox_MACBYTES) {
+				console.log("THROW Short message");
+				console.log('returning plain original:', nct);
+				return nct;
+			}
+			nct = sodium.from_hex(nct);
+			let nonce = nct.slice(0, sodium.crypto_secretbox_NONCEBYTES),
+					ct = nct.slice(sodium.crypto_secretbox_NONCEBYTES);
+			let res = new TextDecoder("utf-8").decode(sodium.crypto_secretbox_open_easy(ct, nonce, key));
+			console.log('returning text DEC:', res);
+			return res;
 		};
 
 		// Sidebar sliding
