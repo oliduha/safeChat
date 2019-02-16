@@ -188,7 +188,7 @@ var ChatApp = function() {
         return function(req, res) {
             var mime_type = self.mimeType[static_file.substring(static_file.lastIndexOf('.') + 1)];
             if (mime_type === undefined) {
-                mimeType = "text/plain";
+                mime_type = "text/plain";
             }
             console.log(static_file, mime_type);
             res.setHeader('Content-Type', mime_type);
@@ -242,6 +242,11 @@ var ChatApp = function() {
                 }
             });
             socket.on('join chat', function (data) {
+                console.log("data.name:", data.name);
+                if(!data.name) {
+                    socket.emit('callback', 'join chat', {accepted: false, error: 'You must specifie a user name'});
+                    return;
+                }
                 if (data && data.chat_url && data.name) {
                     var chat = self.chats[data.chat_url];
                     if (chat) {
@@ -250,12 +255,13 @@ var ChatApp = function() {
                                 {accepted: false, error: 'Sorry, the chat has been locked'});
                         } else if (chat.chatters.get(data.name)) {
                             socket.emit('callback', 'join chat',
-                                {accepted: false, error: 'Sorry, the username ' + data.name + ' is already in use'});
+                                {accepted: false, error: 'Sorry, the user name ' + data.name + ' is already in use'});
                         } else {
                             console.log(data.name + ' joined the chat');
                             socket.chatter =  new chat.Chatter(data);
                             socket.join(chat.chat_name);
                             self.io.sockets.to(chat.chat_name).emit('new chatter', data);
+                            console.log(chat.messages);
                             socket.emit('initialize history', { chat_name: chat.chat_name,
                                                                 chatters: chat.chatters,
                                                                 messages: chat.messages});
@@ -276,13 +282,22 @@ var ChatApp = function() {
 
     self.setupEvents = function (socket, chat) {
         socket.on('new message', function (data) {
-            self.io.of('/').in(chat.chat_name).clients(function(error,clients){
-            console.log('connections: ' + clients.length);
+            self.io.of('/').in(chat.chat_name).clients(function(error, clients){
+                console.log('connections: ' + clients.length);
             });
-            // console.log('connections: ' + self.io.of('/').in(chat.chat_name).clients);
             var message = new chat.Message(data);
+            console.log('message data:', data);
             self.io.sockets.to(chat.chat_name).emit('new message', data);
         });
+        socket.on('crypted message', function (data) {
+            self.io.of('/').in(chat.chat_name).clients(function(error, clients){
+                console.log('connections: ' + clients.length);
+            });
+            var message = new chat.Message(data);
+            console.log('message data:', data);
+            self.io.sockets.to(chat.chat_name).emit('crypted message', data);
+        });
+
         var disconnect = function() {
             console.log('disconnect');
             if (socket.chatter) {
@@ -300,6 +315,11 @@ var ChatApp = function() {
         };
         socket.on('disconnect', disconnect);
         socket.on('leave chat', disconnect);
+
+        socket.on('username changed', function(data) {
+            chat.systemMessage(data.old_name + ' changed name for ' + data.new_name, self.io);
+        });
+
         socket.on('clear messages', function() {
                             console.log('clear messages');
             chat.messages = [];

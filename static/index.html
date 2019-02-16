@@ -8,6 +8,7 @@
 		<link href="//hnetdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" />
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 	  	crossorigin="anonymous"></script>
+		<script src="sodium.js" async></script>
 		<style>
 			html {
 				overflow-y: scroll;
@@ -68,13 +69,19 @@
 			}
 		</style>
 		<script>
-			function generateKey () {
+			function generateKey (txt) {
 				var key = '';
 				for (var i = 0; i < 64; i += 1) {
 					var code = 55 + Math.floor(Math.random() * 36);
 					if (code < 65) code -= 7;
 					key += String.fromCharCode(code);
 				}
+				var sk = sodium.randombytes_buf(16);
+				sk = sodium.to_hex(sk);
+				console.log('sk:', sk.length, sk);
+				var key0 = sodium.to_hex(sodium.crypto_generichash(16, sodium.from_string(txt), sk));
+				console.log('key0:', key0.length, key0);
+				alert('key0:', key0.length, key0);
 				return key;
 			};
 
@@ -93,7 +100,7 @@
 							console.log(res.error);
 							$('.alert').html(res.error).fadeIn(250);
 						} else {
-							window.location = res.redirect + '#' + generateKey();
+							window.location = res.redirect + '#' + generateKey(chat_name);
 						}
 					});
 				});
@@ -116,8 +123,7 @@
 							showSection.first_shown = true;
 							console.log('first shown');
 							showSection.running = false;
-						}
-						else {
+						} else {
 							$(showSection.curr_section).fadeOut(200, function () {
 								var sec = location.hash;
 								$(sec).fadeIn(500);
@@ -140,7 +146,7 @@
 				<p>Chat with anyone, anywhere, securely</p>
 				<br />-->
 				<img src="safechat_medium.png" class="logo" alt="logo SafeChat" />
-				<div class="alert alert-error">
+				<div class="alert alert-danger">
 					Your Browser does not support ChatSafe
 				</div>
 				<h4>Simple encrypted instant messaging</h4><br />

@@ -56,7 +56,9 @@ a img {
   clear: both;
 }
 .left-column .nav .is_me {
-  background-color: #ffdc00;
+  background-color: #f0f0f0;
+  border: 1px solid #787878;
+  border-radius: 3px;
 }
 .left-column .nav li {
   margin-right: 2px;
@@ -165,7 +167,7 @@ a img {
 .messages-box .message .sender small {
   opacity: 0.75;
 }
-.messages-box .message .sender small:before {
+.messages-box .message .sender small:after {
   content: " ";
   display: inline;
 }
@@ -176,6 +178,20 @@ a img {
 }
 .messages-box .message .message-text {
   margin-left: 0px;
+}
+.messages-box .message .message-text input {
+  width: 93%;
+}
+.messages-box .message .message-text button#btn-copy {
+  width: 5%;
+  padding: 0;
+  height: 24px;
+  margin-bottom: 5px;
+}
+.messages-box .message .message-text button > img {
+  width: 16px;
+  height: 16px;
+  margin-bottom: 5px;
 }
 @media screen and (max-width: 767px) {
   .messages-box .is_me .message-text {
