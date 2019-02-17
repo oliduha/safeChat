@@ -26,7 +26,7 @@
 			<img src="safechat.png" class="logo" alt="logo SafeChat" />
 			<ul class="nav nav-tabs">
 				<li ng-repeat="chatter in chatters">
-					<a class="color-{{chatter.id % 6}} {{chatter.isMe()}}">{{chatter.name}}</a> 
+					<a class="color-{{chatter.id % 6}} {{chatter.isMe()}}">{{chatter.name}}</a>
 				</li>
 			</ul>
 			<button class="btn btn-danger" ng-show="my_username" ng-click="clearMessages()">
@@ -57,8 +57,8 @@
 				<div class="message row-fluid" ng-hide="messages.length > 0">
 					<div class="message-text">
 						Securely send this address to the people you want to chat with: <br /><br />
-						<input id="url-txt" type="text" style="width: 97%" value="{{page_url}}" />
-						<button id="btn-copy" class="btn" ng-click="copyUrl()"><img src="clippy.png" alt="copy URL" title="copy URL"/></button>
+						<input id="urlTxt" type="text" value="{{page_url}}" />
+						<button id="btnCopy" class="btn" ng-click="copyUrl()"><img src="clippy.png" alt="Copy URL" title="Copy URL"/></button>
 					</div>
 				</div>
 				<div class="message row-fluid color-{{chatters.get(message.sender).id % 6}} {{chatters.get(message.sender).isMe()}}"
