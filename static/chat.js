@@ -1,408 +1,465 @@
+/*eslint linebreak-style: ["error", "windows"]*/
+/*global window, location, self, document, io, GibberishAES, sodium, $*/
 function Chat($scope) {
-	if (!$scope.server) {
-		window.ng_scope = $scope;
-		$scope.chat_url = $scope.chat_url || location.pathname.substring(1);
-		$scope.key = location.hash.substring(1);
-		$scope.page_url = location.href;
-	}
-	console.log($scope.key || "no key here!");
-	var i;
-	$scope.chat_name = 	$scope.chat_name || $scope.chat_url.split('_').join(' ') || 'Chat';
-	console.log($scope.chat_name);
-	$scope.my_username = undefined;
-	$scope.locked = false;
-	$scope.chatters = [];
-	$scope.chatters.get = function (name) {
-		for (var i = 0; i<this.length; i++) {
-			if (this[i].name === name) {
-				return this[i];
-			}
-		}
-		return undefined;
-	};
-	$scope.Chatter = function (data) {
-		var self = this;
-		self.name = data.name;
-		self.id = data.id;
-		if (!self.id) {
-			var max_id = -1;
-			for (var i = 0; i<$scope.chatters.length; i++) {
-				if ($scope.chatters[i].id > max_id) {
-					max_id = $scope.chatters[i].id;
-				}
-			}
-			self.id = max_id + 1;
-		}
-		$scope.chatters.push(self);
-		return self;
-	};
-	$scope.Chatter.prototype.isMe = function () {
-		if (this.name === $scope.my_username) {
-			return 'is_me';
-		}
-		return '';
-	};
-	$scope.Chatter.prototype.updateName = function (new_name) {
-		console.log(new_name);
-		socket.emit('username changed', {old_name: this.name, new_name: new_name});
-		if (this.name == $scope.my_username) {
-			$scope.my_username = $scope.new_username;
-		}
-		this.name = $scope.new_username;
-	};
-	$scope.chatters.destroy = function (name) {
-		for (var i = 0; i<this.length; i++) {
-			if (this[i].name === name) {
-				this.splice(i, 1);
-			}
-		}
-		return undefined;
-	};
+  if (!$scope.server) {
+    window.ng_scope = $scope;
+    $scope.chat_url = $scope.chat_url || location.pathname.substring(1);
+    $scope.key = location.hash.substring(1);
+    $scope.page_url = location.href;
+  }
+  console.log($scope.key || 'no key here!');
+  var i;
+  $scope.chat_name = $scope.chat_name || $scope.chat_url.split('_').join(' ') || 'Chat';
+  console.log($scope.chat_name);
+  $scope.my_username = undefined;
+  $scope.locked = false;
+  $scope.chatters = [];
+  $scope.chatters.get = function (name) {
+    for (var i = 0; i < this.length; i++) {
+      if (this[i].name === name) {
+        return this[i];
+      }
+    }
+    return undefined;
+  };
+  $scope.Chatter = function (data) {
+    var self = this;
+    self.name = data.name;
+    self.id = data.id;
+    if (!self.id) {
+      var max_id = -1;
+      for (var i = 0; i < $scope.chatters.length; i++) {
+        if ($scope.chatters[i].id > max_id) {
+          max_id = $scope.chatters[i].id;
+        }
+      }
+      self.id = max_id + 1;
+    }
+    $scope.chatters.push(self);
+    return self;
+  };
+  $scope.Chatter.prototype.isMe = function () {
+    if (this.name === $scope.my_username) {
+      return 'is_me';
+    }
+    return '';
+  };
+  $scope.Chatter.prototype.updateName = function (new_name) {
+    console.log(new_name);
+    socket.emit('username changed', {
+      old_name: this.name,
+      new_name: new_name
+    });
+    if (this.name == $scope.my_username) {
+      $scope.my_username = $scope.new_username;
+    }
+    this.name = $scope.new_username;
+  };
+  $scope.chatters.destroy = function (name) {
+    for (var i = 0; i < this.length; i++) {
+      if (this[i].name === name) {
+        this.splice(i, 1);
+      }
+    }
+    return undefined;
+  };
 
-	$scope.messages = [];
-	$scope.Message = function (data) {
-		var self = this;
-		data = data || {};
-		self.text = data.text;
-		// undefined sender indicates system message
-		self.sender = data.sender;
-		self.time = (data.time? new Date(data.time) : new Date());
-		$scope.messages.push(self);
-	    if (!$scope.server) {
-			$scope.scrollDown();
-	    }
-		return self;
-	};
-	$scope.Message.prototype.timeString = function () {
-		var mins = this.time.getMinutes();
-		var hours = this.time.getHours();
-		if (mins === 0) {
-			mins = '00';
-		} else if (mins < 10) {
-			mins = '0' + mins;
-		}
-		if (hours === 0) {
-			hours = '00';
-		} else if (hours < 10) {
-			hours = '0' + hours;
-		}
-		return hours + ':' + mins;
-	};
-	$scope.newMessage = function (text, sender, time) {
-		new $scope.Message({text: text, sender: sender, time: time});
-	};
-	$scope.systemMessage = function (text, io) {
-		if ($scope.server) {
-			new $scope.Message({text: text});
-			io.sockets.to($scope.chat_name).emit('new message', {text: text});
-		} else {
-			console.log('emitting message: ' + text);
-			socket.emit('new message', {text: text});
-		}
-		console.log('emitting sys message: ' + text);
-	};
-	$scope.clearMessages = function () {
-		$scope.confirm(	'Clear all messages?', 
-						'Are you sure you want to delete all messages from the chat history?', 
-						function (accepted) {
-							if (accepted) {
-								$scope.messages = [];
-								if ($scope.server) {
-									self.io.sockets.to($scope.chat_name).emit('clear messages');
-								} else {
-									socket.emit('clear messages');
-								}
-								$scope.systemMessage('All messages cleared');
-							}
-						});
-	};
-	// Client-side only logic
-	$scope.clientConnection = function () {
-		document.title = $scope.chat_name + ' | ' + document.title;
-		console.log('self.port', self.port);
-		console.log('https://' + window.location.hostname + ':' + (self.port || 8043));
-		socket = io.connect('https://' + window.location.hostname + ':' + (self.port || 8043), { secure: true});
-		socket.callback = {};
-		socket.emitWithCallback = function (name, data, callback) {
-			socket.emit(name, data);
-			socket.callback[name] = callback;
-		};
-		socket.on('callback', function (func, response) {
-			console.log('callback:', func, typeof socket.callback[func]);
-			socket.callback[func](response);
-		});
-		socket.on('connect', function () {
-			console.log('checking if chat is locked');
-			socket.emit('check if locked', {chat_url: $scope.chat_url});
-		});
-		socket.on('initialize history', function (data) {
-			$scope.chat_name = data.chat_name;
-			// Clear messages array
-			$scope.messages = [];
-			// Clear chatters array
-			while ($scope.chatters.length > 0) {
-				$scope.chatters.pop();
-			}
-			for (i = 0; i < data.messages.length; i++) {
-				data.messages[i].text = $scope.decrypt(data.messages[i].text);
-				new $scope.Message(data.messages[i]);
-			}
-			for (i = 0; i < data.chatters.length; i++) {
-				new $scope.Chatter(data.chatters[i]);
-			}
-			console.log('initialize history');
-			$scope.$apply();
-			// Scroll to the bottom just for prettyness
-			$scope.scrollDown();
-		});
-		socket.on('new message', function (data) {
-			if (data.sender !== $scope.my_username || !data.sender) {
-				data.text = $scope.decrypt(data.text);
-				new $scope.Message(data);
-			}
-			$scope.$apply();
-			// Scroll to the bottom jsut for prettyness
-		});
-		$scope.sendMessage = function() {
-			if ($scope.message_text !== '') {
-				var original_text = $scope.message_text;
-				var enc_text =  'ENCRYPTED: ' + GibberishAES.enc(original_text, $scope.key);
-				var message = new $scope.Message({text: enc_text, sender: $scope.my_username});
-			    $scope.message_text = '';
-			    socket.emit('new message', message);
-			    message.text = original_text;
-				}
+  $scope.messages = [];
+  $scope.Message = function (data) {
+    var self = this;
+    data = data || {};
+    self.text = data.text;
+    self.encrypted = data.encrypted || false;
+    // undefined sender indicates system message
+    self.sender = data.sender;
+    self.time = (data.time ? new Date(data.time) : new Date());
+    $scope.messages.push(self);
+    if (!$scope.server) {
+      $scope.scrollDown();
+    }
+    return self;
+  };
+  $scope.Message.prototype.timeString = function () {
+    var mins = this.time.getMinutes();
+    var hours = this.time.getHours();
+    if (mins === 0) {
+      mins = '00';
+    } else if (mins < 10) {
+      mins = '0' + mins;
+    }
+    if (hours === 0) {
+      hours = '00';
+    } else if (hours < 10) {
+      hours = '0' + hours;
+    }
+    return hours + ':' + mins;
+  };
+  $scope.newMessage = function (text, encrypted, sender, time) {
+    new $scope.Message({
+      text: text,
+      encrypted: encrypted,
+      sender: sender,
+      time: time
+    });
+  };
+  $scope.systemMessage = function (text, io) {
+    if ($scope.server) {
+      new $scope.Message({
+        text: text
+      });
+      io.sockets.to($scope.chat_name).emit('new message', {
+        text: text
+      });
+    } else {
+      console.log('emitting message: ' + text);
+      socket.emit('new message', {
+        text: text
+      });
+    }
+    console.log('emitting sys message: ' + text);
+  };
+  $scope.clearMessages = function () {
+    $scope.confirm('Clear all messages?',
+      'Are you sure you want to delete all messages from the chat history?',
+      function (accepted) {
+        if (accepted) {
+          $scope.messages = [];
+          if ($scope.server) {
+            self.io.sockets.to($scope.chat_name).emit('clear messages');
+          } else {
+            socket.emit('clear messages');
+          }
+          $scope.systemMessage('All messages cleared');
+        }
+      });
+  };
+  // Client-side only logic
+  $scope.clientConnection = function () {
+    document.title = $scope.chat_name + ' | ' + document.title;
+    console.log('self.port', self.port);
+    console.log('https://' + window.location.hostname + ':' + (self.port || 8043));
+    socket = io.connect('https://' + window.location.hostname + ':' + (self.port || 8043), {
+      secure: true
+    });
+    socket.callback = {};
+    socket.emitWithCallback = function (name, data, callback) {
+      socket.emit(name, data);
+      socket.callback[name] = callback;
+    };
+    socket.on('callback', function (func, response) {
+      console.log('callback:', func, typeof socket.callback[func]);
+      socket.callback[func](response);
+    });
+    socket.on('connect', function () {
+      console.log('checking if chat is locked');
+      socket.emit('check if locked', {
+        chat_url: $scope.chat_url
+      });
+    });
+    socket.on('initialize history', function (data) {
+      $scope.chat_name = data.chat_name;
+      // Clear messages array
+      $scope.messages = [];
+      // Clear chatters array
+      while ($scope.chatters.length > 0) {
+        $scope.chatters.pop();
+      }
+      for (i = 0; i < data.messages.length; i++) {
+        // data.messages[i].text = $scope.decrypt(data.messages[i].text);
+        if (data.messages[i].encrypted) {
+          data.messages[i].text = $scope.sDecrypt(data.messages[i].text, $scope.key);
+        }
+        new $scope.Message(data.messages[i]);
+      }
+      for (i = 0; i < data.chatters.length; i++) {
+        new $scope.Chatter(data.chatters[i]);
+      }
+      console.log('initialize history');
+      $scope.$apply();
+      // Scroll to the bottom just for prettyness
+      $scope.scrollDown();
+    });
+    socket.on('new message', function (data) {
+      if (data.sender !== $scope.my_username || !data.sender) {
+        // data.text = $scope.decrypt(data.text);
+        new $scope.Message(data);
+      }
+      $scope.$apply();
+      // Scroll to the bottom jsut for prettyness
+    });
+    socket.on('encrypted message', function (data) {
+      if (data.sender !== $scope.my_username) {
+        data.text = $scope.sDecrypt(data.text, $scope.key);
+        new $scope.Message(data);
+      }
+      $scope.$apply();
+      // Scroll to the bottom jsut for prettyness
+    });
+    $scope.sendMessage = function () {
+      var message;
+      console.log('Enc & send?', typeof $scope.message_text, '->' + $scope.message_text + '<-');
+      if ($scope.message_text !== ('' || ' ') && typeof $scope.message_text !== 'undefined') {
+        console.log('Yes! Encoding & sending:', typeof $scope.message_text, '->' + $scope.message_text + '<-');
+        var original_text = $scope.message_text;
+        // var enc_text = 'ENCRYPTED: ' + GibberishAES.enc(original_text, $scope.key);
+        var enc_text = $scope.sEncrypt(original_text, $scope.key);
+        message = new $scope.Message({
+          text: enc_text,
+          encrypted: 'encrypted',
+          sender: $scope.my_username
+        });
+        $scope.message_text = '';
+        console.log('Emiting encrypted message:', typeof message, message);
+        socket.emit('encrypted message', message);
+        message.text = original_text;
+      } else {
+        console.log('No! Skip encoding: BUG HERE?', typeof $scope.message_text, '->' + $scope.message_text + '<-');
+        message = new $scope.Message({
+          text: $scope.message_text,
+          sender: $scope.my_username
+        });
+        console.log('Emiting new message:', typeof message, message);
+        socket.emit('new message', message);
+      }
 
-				/* var sEncrypt = function(msg, key) {
-						console.log('sodium msg to enc:', msg);
-						let nonce = sodium.randombytes_buf(sodium.crypto_secretbox_NONCEBYTES);
-						console.log('sodium enc nonce:', nonce);
-						let csb = sodium.crypto_secretbox_easy(msg, nonce, key);
-						console.log('sodium csb:', csb);
-						let res = new Uint8Array(nonce.length + csb.length);
-						res.set(nonce);
-						res.set(csb, nonce.length);
-						console.log("res:", sodium.to_hex(res));
-						return sodium.to_hex(res);
-				};
+      // key = sodium.to_hex(sodium.crypto_generichash(16, sodium.from_string($scope.chat_name))); // works !
 
-				var sDecrypt = function(nonce_and_ciphertext, key) {
-						if (nonce_and_ciphertext.length < sodium.crypto_secretbox_NONCEBYTES + sodium.crypto_secretbox_MACBYTES) {
-								throw "Short message";
-						}
-						nonce_and_ciphertext = sodium.from_hex(nonce_and_ciphertext);
-						let nonce = nonce_and_ciphertext.slice(0, sodium.crypto_secretbox_NONCEBYTES),
-								ciphertext = nonce_and_ciphertext.slice(sodium.crypto_secretbox_NONCEBYTES);
-						return new TextDecoder("utf-8").decode(sodium.crypto_secretbox_open_easy(ciphertext, nonce, key));
-				}; */
+      /* var key = sodium.to_hex(sodium.randombytes_buf(16)); // works to !
+      console.log('key:', key.length, key);
+      var testSodium = $scope.sEncrypt('*A*B*C*0*1*2*', key);
+      console.log('sodium enc:', testSodium);
+      testSodium = $scope.sDecrypt(testSodium, key);
+      console.log('sodium dec:', testSodium); */
+    };
 
-				let key = sodium.to_hex(sodium.crypto_generichash(16, sodium.from_string($scope.chat_name))); // works !
-				key = sodium.to_hex(sodium.randombytes_buf(16)); // works to !
-				console.log("key:", key.length, key);
-				var testSodium = $scope.sEncrypt('*A*B*C*0*1*2*', key);
-				console.log('sodium enc:', testSodium);
-				testSodium = $scope.sDecrypt(testSodium, key);
-				console.log('sodium dec:', testSodium);
-		};
+    // Send message on enter key
+    $('#message_textarea').keypress(function (event) {
+      if (event.which === 13) {
+        event.preventDefault();
+        $scope.sendMessage();
+        $scope.$apply();
+      }
+    });
+    
+    socket.on('clear messages', function () {
+      $scope.messages = [];
+      $scope.$apply();
+    });
+    
+    $scope.setUsername = function () {
+      if ($scope.new_username !== '') {
+        if ($scope.my_username) {
+          $scope.chatters.get($scope.my_username).updateName($scope.new_username);
+          $('#username_modal').modal('hide');
+          $scope.username_error = undefined;
+        } else {
+          $scope.joinChat($scope.new_username);
+        }
+      }
+    };
+    // Set username on enter key
+    $('#username_modal .username').keypress(function (event) {
+      if (event.which === 13) {
+        event.preventDefault();
+        $scope.setUsername();
+        $scope.$apply();
+      }
+    });
+    
+    $scope.joinChat = function (name) {
+      $scope.join_loading = true;
+      var chat_url = location.pathname.substring(1);
+      console.log('emitting join request');
+      socket.emitWithCallback('join chat', {
+        name: name,
+        chat_url: chat_url
+      }, function (response) {
+        console.log('received join request');
+        if (response.accepted) {
+          $scope.my_username = $scope.new_username;
+          $('#username_modal').modal('hide');
+          $scope.username_error = undefined;
+          $scope.systemMessage(name + ' has joined the chat');
+        } else {
+          $scope.username_error = response.error;
+        }
+        $scope.join_loading = false;
+        $scope.$apply();
+      });
+    };
+    
+    socket.on('new chatter', function (data) {
+      new $scope.Chatter(data);
+      $scope.$apply();
+    });
+    
+    socket.on('chatter disconnected', function (data) {
+      $scope.chatters.destroy(data.name);
+      $scope.$apply();
+    });
+    
+    $scope.leaveChat = function () {
+      $scope.confirm('Leave chat?',
+        'Are you sure you wish to leave the chat?',
+        function (accepted) {
+          if (accepted) {
+            $scope.chatters.destroy($scope.my_username);
+            //socket.emit('leave chat');
+            //$scope.my_username = undefined;
+            socket.disconnect();
+            location.reload();
+            //window.socket = $scope.clientConnection();
+          }
+        });
+    };
 
-		// Send message on enter key
-		$('#message_textarea').keypress(function(event) {
-			if (event.which === 13) {
-				event.preventDefault();
-				$scope.sendMessage();
-		    	$scope.$apply();
-			}
-		});
-		socket.on('clear messages', function () {
-			$scope.messages = [];
-			$scope.$apply();
-		});
+    // Confirm Modal
+    // confirm modal default
+    $scope.confirm_modal = {
+      title: 'Are you sure?',
+      message: 'Are you sure?',
+      respond: function () {}
+    };
+    $scope.confirm = function (title, message, callback) {
+      $scope.confirm_modal.title = title;
+      $scope.confirm_modal.message = message;
+      $scope.confirm_modal.respond = function (response) {
+        $('#confirm_modal').modal('hide');
+        callback(response);
+      };
+      $('#confirm_modal').modal('show');
+    };
 
-		$scope.setUsername = function () {
-			if ($scope.new_username !== '') {
-				if ($scope.my_username) {
-					$scope.chatters.get($scope.my_username).updateName($scope.new_username);
-					$('#username_modal').modal('hide');
-					$scope.username_error = undefined;
-				} else {
-					$scope.joinChat($scope.new_username);
-				}
-		  }
-		};
-		// Set username on enter key
-		$('#username_modal .username').keypress(function(event) {
-			if (event.which === 13) {
-				event.preventDefault();
-				$scope.setUsername();
-		    	$scope.$apply();
-			}
-		});
-		$scope.joinChat = function (name) {
-			$scope.join_loading = true;
-			var chat_url = location.pathname.substring(1);
-			console.log('emitting join request');
-			socket.emitWithCallback('join chat', {name: name, chat_url: chat_url}, function (response) {
-				console.log('received join request');
-				if (response.accepted) {
-					$scope.my_username = $scope.new_username;
-					$('#username_modal').modal('hide');
-					$scope.username_error = undefined;
-					$scope.systemMessage(name + ' has joined the chat');
-				} else {
-					$scope.username_error = response.error;
-				}
-				$scope.join_loading = false;
-				$scope.$apply();
-			});
-		};
-		socket.on('new chatter', function (data) {
-			new $scope.Chatter(data);
-			$scope.$apply();
-		});
-		socket.on('chatter disconnected', function (data) {
-			$scope.chatters.destroy(data.name);
-			$scope.$apply();
-		});
-		$scope.leaveChat = function () {
-			//var message = new chat.Message({text: $scope.my_username + ' has left the chat'});
-			//socket.emit('new message', message);
-			$scope.confirm(	'Leave chat?', 
-							'Are you sure you wish to leave the chat?', 
-							function (accepted) {
-								if (accepted) {
-									$scope.chatters.destroy($scope.my_username);
-									//socket.emit('leave chat');
-									//$scope.my_username = undefined;
-									socket.disconnect();
-									location.reload();
-									//window.socket = $scope.clientConnection();
-								}
-							});
-		};
+    $('#username_modal').on('shown', function () {
+      $('#username_modal .username').first().focus();
+    });
+    $scope.scrollDown = function () {
+      setTimeout(function () {
+        $('html, body').stop().animate({
+          scrollTop: $(document).height()
+        }, 'slow');
+      }, 50);
+    };
+    $scope.toggleLocked = function () {
+      if ($scope.locked) {
+        $scope.confirm('Clear messages?',
+          'Would you like to delete all messages from the chat history before unlocking?',
+          function (accepted) {
+            if (accepted) {
+              socket.emit('clear messages');
+              $scope.systemMessage('All messages cleared');
+            } else {
+              $scope.confirm('Don\'t clear messages?',
+                'Are you sure you don\'t want to delete all messages from the chat history before unlocking?',
+                function (accepted) {
+                  if (!accepted) {
+                    socket.emit('clear messages');
+                    $scope.systemMessage('All messages cleared');
+                  }
+                });
+            }
+            socket.emit('unlock chat');
+          });
+      } else {
+        socket.emit('lock chat');
+      }
+    };
+    socket.on('chat locked', function () {
+      $scope.locked = true;
+      console.log('chat locked');
+      $scope.$apply();
+    });
+    socket.on('chat unlocked', function () {
+      $scope.locked = false;
+      console.log('chat unlocked');
+      $scope.$apply();
+    });
 
-		// Confirm Modal
-		// confirm modal default
-		$scope.confirm_modal = {title: 'Are you sure?', message: 'Are you sure?', respond: function () {}};
-		$scope.confirm = function (title, message, callback) {
-			$scope.confirm_modal.title = title;
-			$scope.confirm_modal.message = message;
-			$scope.confirm_modal.respond = function (response) {
-				$('#confirm_modal').modal('hide');
-				callback(response);
-			};
-			$('#confirm_modal').modal('show');
-		};
+    $scope.decrypt = function (text) {
+      if (text.indexOf('ENCRYPTED:') === 0) {
+        text = GibberishAES.dec(text.substring(11), $scope.key);
+      }
+      return text;
+    };
 
-		$('#username_modal').on('shown', function () {
-			$("#username_modal .username").first().focus();
-		});
-		$scope.scrollDown = function () {
-			setTimeout(function () {
-				$('html, body').stop().animate({scrollTop:$(document).height()}, 'slow');
-			}, 50);
-		};
-		$scope.toggleLocked = function () {
-			if ($scope.locked) {
-				$scope.confirm(	'Clear messages?', 
-								'Would you like to delete all messages from the chat history before unlocking?', 
-								function (accepted) {
-									if (accepted) {
-										socket.emit('clear messages');
-										$scope.systemMessage('All messages cleared');
-									} else {
-										$scope.confirm(	'Don\'t clear messages?',
-												'Are you sure you don\'t want to delete all messages from the chat history before unlocking?', 
-												function (accepted) {
-													if(!accepted) {
-														socket.emit('clear messages');
-														$scope.systemMessage('All messages cleared');
-													}
-												});
-									}
-									socket.emit('unlock chat');
-								});
-			} else {
-				socket.emit('lock chat');
-			}
-		};
-		socket.on('chat locked', function () {
-			$scope.locked = true;
-			console.log('chat locked');
-			$scope.$apply();
-		});
-		socket.on('chat unlocked', function () {
-			$scope.locked = false;
-			console.log('chat unlocked');
-			$scope.$apply();
-		});
+    $scope.sEncrypt = function (txt, key) {
+      console.log('sodium msg to enc:', txt);
+      var nonce = sodium.randombytes_buf(sodium.crypto_secretbox_NONCEBYTES);
+      console.log('sodium enc nonce:', nonce);
+      var csb = sodium.crypto_secretbox_easy(txt, nonce, key);
+      console.log('sodium csb:', csb);
+      var arr = new Uint8Array(nonce.length + csb.length);
+      arr.set(nonce);
+      arr.set(csb, nonce.length);
+      var res = sodium.to_hex(arr);
+      console.log('sodium res:', res);
+      return res;
+    };
 
-		$scope.decrypt = function (text) {		
-			if (text.indexOf('ENCRYPTED:') === 0) {
-				text = GibberishAES.dec(text.substring(11), $scope.key);
-			}
-			return text;
-		};
+    $scope.sDecrypt = function (nct, key) {
+      if (nct) {
+        console.log('text to DEC:', nct);
+      } else {
+        console.log('NO text to DEC:', '"' + nct + '"');
+        return ' ';
+      }
+      if (nct.length < sodium.crypto_secretbox_NONCEBYTES + sodium.crypto_secretbox_MACBYTES) {
+        console.log('THROW Short message');
+        console.log('returning plain original:', nct);
+        return nct;
+      }
+      nct = sodium.from_hex(nct);
+      var nonce = nct.slice(0, sodium.crypto_secretbox_NONCEBYTES),
+        ct = nct.slice(sodium.crypto_secretbox_NONCEBYTES);
+      var res = new TextDecoder('utf-8').decode(sodium.crypto_secretbox_open_easy(ct, nonce, key));
+      console.log('returning text DEC:', res);
+      return res;
+    };
 
-		$scope.sEncrypt = function(txt, key) {
-			console.log('sodium msg to enc:', txt);
-			let nonce = sodium.randombytes_buf(sodium.crypto_secretbox_NONCEBYTES);
-			console.log('sodium enc nonce:', nonce);
-			let csb = sodium.crypto_secretbox_easy(txt, nonce, key);
-			console.log('sodium csb:', csb);
-			let arr = new Uint8Array(nonce.length + csb.length);
-			arr.set(nonce);
-			arr.set(csb, nonce.length);
-			let res = sodium.to_hex(arr);
-			console.log("res:", res);
-			return res;
-		};
+    // Copy URL
+    $scope.copyUrl = function() { // eslint-disable-line no-unused-vars
+      $('#urlTxt').select();
+      console.log('Copy URL:', $('#urlTxt').val());
+      if(document.execCommand('copy')) {
+        console.log('Successfully copied URL:', $('#urlTxt').val());
+      } else {
+        console.log('FAILED Coping URL:', $('#urlTxt').val());
+      }
+      return false;
+    };
 
-		$scope.sDecrypt = function(nct, key) {
-			if (nct) {
-				console.log('text to DEC:', nct);
-			} else {
-				return '';
-			}
-			if (nct.length < sodium.crypto_secretbox_NONCEBYTES + sodium.crypto_secretbox_MACBYTES) {
-				console.log("THROW Short message");
-				console.log('returning plain original:', nct);
-				return nct;
-			}
-			nct = sodium.from_hex(nct);
-			let nonce = nct.slice(0, sodium.crypto_secretbox_NONCEBYTES),
-					ct = nct.slice(sodium.crypto_secretbox_NONCEBYTES);
-			let res = new TextDecoder("utf-8").decode(sodium.crypto_secretbox_open_easy(ct, nonce, key));
-			console.log('returning text DEC:', res);
-			return res;
-		};
+    // Sidebar sliding
+    var slide_speed = 300;
+    var sidebar = $('.left-column');
+    $scope.showSidebar = function () {
+      sidebar.animate({
+        left: '0px'
+      }, slide_speed, function () {
+        sidebar.addClass('sidebar_out').css({
+          left: ''
+        });
+      });
+    };
+    $scope.hideSidebar = function () {
+      sidebar.animate({
+        left: '-220px'
+      }, slide_speed, function () {
+        sidebar.removeClass('sidebar_out').css({
+          left: ''
+        });
+      });
+    };
+    return socket;
+  };
 
-		// Sidebar sliding
-		var slide_speed = 300;
-		var sidebar = $('.left-column');
-		$scope.showSidebar = function () {
-			sidebar.animate({
-				left: '0px'
-			}, slide_speed, function () {
-				sidebar.addClass('sidebar_out').css({left: ''});
-			});
-		};
-		$scope.hideSidebar = function () {
-			sidebar.animate({
-				left: '-220px'
-			}, slide_speed, function () {
-				sidebar.removeClass('sidebar_out').css({left: ''});
-			});
-		};
-		return socket;
-	};
+  if (!$scope.server) {
+    var socket = $scope.clientConnection();
+  } else {
+    test();
+  }
 
-	if (!$scope.server) {
-		var socket = $scope.clientConnection();
-	} else {
-		test();
-	}
-	function test () {
-		/*
+  function test() {
+    /*
 		new $scope.Chatter({name: 'Dave'});
 		new $scope.Chatter({name: 'Rob'});
 		new $scope.Chatter({name: 'Dan'});
@@ -426,8 +483,8 @@ function Chat($scope) {
 	    new $scope.newMessage('lol TDD 4life', 'Rob', mins_ago(3));
 	    new $scope.newMessage('goodbye world', 'Dave', mins_ago(3));
 	    */
-	}
-	return $scope;
+  }
+  return $scope;
 }
 // for Node require command
 var module = module || {};

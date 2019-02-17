@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<title>SafeChat</title>
-		<meta name="viewport" content="width=350, user-scalable=no" />
-		<!--<link href="bootstrap-combined.min.css" rel="stylesheet">-->
-		<link href="//hnetdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" />
-		<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-	  	crossorigin="anonymous"></script>
-		<script src="sodium.js" async></script>
-		<style>
-			html {
+
+<head>
+  <meta charset="UTF-8">
+  <title>SafeChat</title>
+  <meta name="viewport" content="width=350, user-scalable=no" />
+  <!--<link href="bootstrap-combined.min.css" rel="stylesheet">-->
+  <link href="//hnetdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+  <script src="sodium.js" async></script>
+  <style>
+    html {
 				overflow-y: scroll;
 			}
 			body {
@@ -68,22 +69,10 @@
 				min-height: 615px;
 			}
 		</style>
-		<script>
-			function generateKey (txt) {
-				var key = '';
-				for (var i = 0; i < 64; i += 1) {
-					var code = 55 + Math.floor(Math.random() * 36);
-					if (code < 65) code -= 7;
-					key += String.fromCharCode(code);
-				}
-				var sk = sodium.randombytes_buf(16);
-				sk = sodium.to_hex(sk);
-				console.log('sk:', sk.length, sk);
-				var key0 = sodium.to_hex(sodium.crypto_generichash(16, sodium.from_string(txt), sk));
-				console.log('key0:', key0.length, key0);
-				alert('key0:', key0.length, key0);
-				return key;
-			};
+  <script>
+    function generateKey() {
+				return sodium.to_hex(sodium.randombytes_buf(16));
+      };
 
 			$(document).ready(function () {
 				$('.alert').hide();
@@ -103,15 +92,17 @@
 							window.location = res.redirect + '#' + generateKey(chat_name);
 						}
 					});
-				});
+        });
+
 				$.fn.customShow = function (speed) {
-			        this.show().find("p, h1, h2, h3, h4, li, button").each(function (i) {
-				        var elem = $(this).css({position: "relative", opacity: "0", left: "120px"})
+          this.show().find("p, h1, h2, h3, h4, li, button").each(function (i) {
+            var elem = $(this).css({position: "relative", opacity: "0", left: "120px"})
 						setTimeout(function() {
 							elem.animate({opacity: "1", left: "0px"}, speed);
 						}, i * 40);
-			        });
-			    }
+			    });
+        };
+
 				var showSection = function (e) {
 					console.log(location.hash);
 					if(!showSection.running && $(location.hash).get(0)) {
@@ -132,102 +123,111 @@
 							});
 						}
 					}
-				};
+        };
+
 				window.onload = showSection;
-				window.onhashchange = showSection;
+        window.onhashchange = showSection;
+
 				$('.info-links a').click(showSection);
 			});
 		</script>
-	</head>
-	<body ng-app>
-		<div class="container">
-			<div class="hero-unit">
-				<!--<h1>ChatSafe</h1>
+</head>
+
+<body ng-app>
+  <div class="container">
+    <div class="hero-unit">
+      <!--<h1>ChatSafe</h1>
 				<p>Chat with anyone, anywhere, securely</p>
 				<br />-->
-				<img src="safechat_medium.png" class="logo" alt="logo SafeChat" />
-				<div class="alert alert-danger">
-					Your Browser does not support ChatSafe
-				</div>
-				<h4>Simple encrypted instant messaging</h4><br />
-				<form class="input-append" id="new_chat_form">
-					<input type="text" class="input-xlarge" 
-						placeholder="Pick a title for your chat" id="chat_name" name="chat_name" />
-					<input type="submit" class="btn btn-inverse" value="Chat" />
-				</form>
-			</div>
-			<div class="info-links">
-				<a href="#how">How?</a>
-				<a href="#why">Why?</a>
-				<a href="#who">Who?</a>
-			</div>
-			<div class="section" id="how">
-				<h2>How to use ChatSafe</h2>
-				<p>
-					The following steps will allow you to use ChatSafe securely:
-					<ol>
-						<li>
-							Use private/incognito browsing mode.
-						</li>
-						<li>
-							Create a chat using the box on the homepage.
-						</li>
-						<li>
-							Send the address of the newly created chat to anyone you want to chat with. This address contains the
-							key to the chat, so keep it safe. I recommend using <a href="https://privnote.com/">privnote</a> to send 
-							the address.
-						</li>
-						<li>
-							Once everyone has joined the chat, click the 'lock chat' button on the left of the chat page.
-						</li>
-						<li>
-							When you finish your conversation, click 'unlock chat' and when prompted click 'yes' to clear all messages 
-							from the chat.
-						</li>
-					</ol>
-				</p>
-				<h2>How it works</h2>
-				<p>
-					When you create a chat, a random key is generated and stored in the hash part of the URL. That's the part which
-					your browser can see but is not sent over the internet to the server. This key used to encrypt your messages 
-					in your browser before they are sent to the server. Once the message reaches the other members of the chat,
-					their browsers will get the key from the URL you sent them to join the chat, and use it to decrypt the message
-					back to its original form.
-				</p>
-				<p>
-					All encryption is done using the <a href="https://github.com/mdp/gibberish-aes">Gibberish AES</a> library, so it
-					follows the 256 bit AES specification. Because all encryption is done in the browser, not even the ChatSafe server 
-					can read messages, as it does not have the encryption key.
-				</p>
-				<p>
-					In case somebody does manage to get your chat URL, with the key to decrypt the messages, the lock feature can be used
-					to stop any new members from joining the chat, so they cannot access the messages. The chat is deleted from the server 
-					once all members have left.
-				</p>
-			</div>
-			<div class="section" id="why">
-				<h2>Why ChatSafe was created</h2>
-				<p>
-					People have a right to communicate in private without being tracked, recorded or monitored. Chatsafe provides 
-					a simple, fast, browser-based instant messaging service for people to do this.</p><p> You shouldn't have to trust any
-					external service to protect your communication data. With ChatSafe, even if somebody has access to our servers
-					they cannot read your messages.
-				</p>
-			</div>
-			<div class="section" id="who">
-				<h2>Who Created ChatSafe?</h2>
-				<p>
-					ChatSafe was created by 
-					<a href="http://www.davidtimms.co.uk">David Timms</a>,
-					a student and web developer from Bristol, UK. If you have any questions or feedback about the site, send me a message on 
-					<a href="http://www.davidtimms.co.uk">my website</a>.
-				</p>
-				<h2>Can I trust you?</h2>
-				<p>
-					You don't have to. ChatSafe is open source software, meaning anybody can 
-					<a href="https://github.com/DavidTimms/ChatSafe">view the source code</a>, so you can check that it does what I say it does.
-  				</p>
-			</div>
-		</div>
-	</body>
+      <img src="safechat_medium.png" class="logo" alt="logo SafeChat" />
+      <div class="alert alert-danger">
+        Your Browser does not support ChatSafe
+      </div>
+      <h4>Simple encrypted instant messaging</h4><br />
+      <form class="input-append" id="new_chat_form">
+        <input type="text" class="input-xlarge" placeholder="Pick a title for your chat" id="chat_name" name="chat_name" />
+        <input type="submit" class="btn btn-inverse" value="Chat" />
+      </form>
+    </div>
+    <div class="info-links">
+      <a href="#how">How?</a>
+      <a href="#why">Why?</a>
+      <a href="#who">Who?</a>
+    </div>
+    <div class="section" id="how">
+      <h2>How to use ChatSafe</h2>
+      <p>
+        The following steps will allow you to use ChatSafe securely:
+        <ol>
+          <li>
+            Use private/incognito browsing mode.
+          </li>
+          <li>
+            Create a chat using the box on the homepage.
+          </li>
+          <li>
+            Send the address of the newly created chat to anyone you want to chat with. This address contains the
+            key to the chat, so keep it safe. I recommend using <a href="https://privnote.com/">privnote</a> to send
+            the address.
+          </li>
+          <li>
+            Once everyone has joined the chat, click the 'lock chat' button on the left of the chat page.
+          </li>
+          <li>
+            When you finish your conversation, click 'unlock chat' and when prompted click 'yes' to clear all messages
+            from the chat.
+          </li>
+        </ol>
+      </p>
+      <h2>How it works</h2>
+      <p>
+        When you create a chat, a random key is generated and stored in the hash part of the URL. That's the part which
+        your browser can see but is not sent over the internet to the server. This key used to encrypt your messages
+        in your browser before they are sent to the server. Once the message reaches the other members of the chat,
+        their browsers will get the key from the URL you sent them to join the chat, and use it to decrypt the message
+        back to its original form.
+      </p>
+      <p>
+        All encryption is done using the <a href="https://github.com/mdp/gibberish-aes">Gibberish AES</a> library, so
+        it
+        follows the 256 bit AES specification. Because all encryption is done in the browser, not even the ChatSafe
+        server
+        can read messages, as it does not have the encryption key.
+      </p>
+      <p>
+        In case somebody does manage to get your chat URL, with the key to decrypt the messages, the lock feature can
+        be used
+        to stop any new members from joining the chat, so they cannot access the messages. The chat is deleted from the
+        server
+        once all members have left.
+      </p>
+    </div>
+    <div class="section" id="why">
+      <h2>Why ChatSafe was created</h2>
+      <p>
+        People have a right to communicate in private without being tracked, recorded or monitored. Chatsafe provides
+        a simple, fast, browser-based instant messaging service for people to do this.</p>
+      <p> You shouldn't have to trust any
+        external service to protect your communication data. With ChatSafe, even if somebody has access to our servers
+        they cannot read your messages.
+      </p>
+    </div>
+    <div class="section" id="who">
+      <h2>Who Created ChatSafe?</h2>
+      <p>
+        ChatSafe was created by
+        <a href="http://www.davidtimms.co.uk">David Timms</a>,
+        a student and web developer from Bristol, UK. If you have any questions or feedback about the site, send me a
+        message on
+        <a href="http://www.davidtimms.co.uk">my website</a>.
+      </p>
+      <h2>Can I trust you?</h2>
+      <p>
+        You don't have to. ChatSafe is open source software, meaning anybody can
+        <a href="https://github.com/DavidTimms/ChatSafe">view the source code</a>, so you can check that it does what I
+        say it does.
+      </p>
+    </div>
+  </div>
+</body>
 </html>
