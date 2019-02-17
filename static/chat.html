@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <head>
   <title>SafeChat</title>
   <meta charset="UTF-8">
@@ -21,7 +20,7 @@
 
 <body ng-app>
   <div class="container" ng-controller="Chat">
-
+    
     <div class="left-column">
       <button class="btn compact-only" ng-click="hideSidebar()"><i class="icon-chevron-left"></i></button>
       <img src="safechat.png" class="logo" alt="logo SafeChat" />
@@ -30,18 +29,22 @@
           <a class="color-{{chatter.id % 6}} {{chatter.isMe()}}">{{chatter.name}}</a>
         </li>
       </ul>
+      
       <button class="btn btn-danger" ng-show="my_username" ng-click="clearMessages()">
         <i class="icon-trash icon-white"></i> Clear Messages
       </button><br />
+      
       <button class="btn" ng-class="{'btn-success': locked}" ng-show="my_username" ng-click="toggleLocked()">
         <i class="icon-lock" ng-class="{'icon-white': locked}"></i>
         <span ng-show="locked">Unlock</span>
         <span ng-hide="locked">Lock</span>
         Chat
       </button><br />
+      
       <button class="btn" ng-show="my_username" ng-click="leaveChat()">
         <i class="icon-arrow-left"></i> Leave Chat
       </button><br />
+      
       <a class="hidden" href="#username_modal" ng-show="my_username" data-toggle="modal">
         Change User Name
       </a>
@@ -54,6 +57,7 @@
         </button>
         <h1>{{chat_name}}</h1>
       </div>
+      
       <div class="messages-box" id="messages-box">
         <div class="message row-fluid" ng-hide="messages.length > 0">
           <div class="message-text">
@@ -69,6 +73,7 @@
           <div class="message-text span9">{{message.text}}</div>
         </div>
       </div>
+      
       <form class="chat-box" ng-submit="sendMessage()">
         <textarea id="message_textarea" ng-show="my_username" ng-model="message_text"></textarea>
         <input type="submit" value="send" class="btn" ng-show="my_username" />

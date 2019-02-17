@@ -240,11 +240,12 @@ function Chat($scope) {
         $scope.$apply();
       }
     });
+    
     socket.on('clear messages', function () {
       $scope.messages = [];
       $scope.$apply();
     });
-
+    
     $scope.setUsername = function () {
       if ($scope.new_username !== '') {
         if ($scope.my_username) {
@@ -264,6 +265,7 @@ function Chat($scope) {
         $scope.$apply();
       }
     });
+    
     $scope.joinChat = function (name) {
       $scope.join_loading = true;
       var chat_url = location.pathname.substring(1);
@@ -285,14 +287,17 @@ function Chat($scope) {
         $scope.$apply();
       });
     };
+    
     socket.on('new chatter', function (data) {
       new $scope.Chatter(data);
       $scope.$apply();
     });
+    
     socket.on('chatter disconnected', function (data) {
       $scope.chatters.destroy(data.name);
       $scope.$apply();
     });
+    
     $scope.leaveChat = function () {
       $scope.confirm('Leave chat?',
         'Are you sure you wish to leave the chat?',

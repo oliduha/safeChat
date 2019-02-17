@@ -345,6 +345,149 @@ var ChatApp = function () {
         var name = socket.chatter.name;
         var message = new chat.Message({
           text: name + ' has left the chat'
+        };
+    };
+
+    self.createStaticRoute = function(static_file) {
+        return function(req, res) {
+            var mime_type = self.mimeType[static_file.substring(static_file.lastIndexOf('.') + 1)];
+            if (mime_type === undefined) {
+                mime_type = "text/plain";
+            }
+            console.log(static_file, mime_type);
+            res.setHeader('Content-Type', mime_type);
+            res.send(self.cache_get(static_file));
+        };
+    };
+
+    self.mimeType = {   txt: "text/plain",
+                        html: "text/html",
+                        css: "text/css",
+                        js: "text/javascript",
+                        xml: "text/xml",
+                        json: "application/json",
+                        png: "image/png",
+                        jpg: "image/jpeg",
+                        jpeg: "image/jpeg",
+                        gif: "image/gif",
+                        ico: "image/x-icon"
+                    };
+
+
+    self.removeFileExtension = function (file_name) {
+        var slice = file_name.lastIndexOf('.');
+        if(slice > 0) {
+            return file_name.substring(0,slice);
+        }
+        return file_name;
+    };
+
+    self.createChat = function (chat_name) {
+        var chat = makeChat({server: true, chat_name: chat_name});
+        //console.log(chat);
+        chat.systemMessage('Chat created', self.io);
+        return chat;
+    };
+
+    self.listenForConnections = function () {
+        self.io.sockets.on('connection', function (socket) {
+            socket.on('check if locked', function (data) {
+                console.log('checking if locked: ' + data.chat_url);
+                if (data.chat_url && self.chats[data.chat_url]) {
+                    socket.chat_url = data.chat_url;
+                    if (self.chats[data.chat_url].locked) {
+                        socket.emit('chat locked');
+                        socket.emit('new message', {text: 'Sorry, this chat is locked'});
+                    } else {
+                        socket.emit('chat unlocked');
+                    }
+                } else {
+                    console.log('bad request');
+                }
+            });
+            socket.on('join chat', function (data) {
+                console.log("data.name:", data.name);
+                if(!data.name) {
+                    socket.emit('callback', 'join chat', {accepted: false, error: 'You must specifie a user name'});
+                    return;
+                }
+                if (data && data.chat_url && data.name) {
+                    var chat = self.chats[data.chat_url];
+                    if (chat) {
+                        if (chat.locked) {
+                            socket.emit('callback', 'join chat',
+                                {accepted: false, error: 'Sorry, the chat has been locked'});
+                        } else if (chat.chatters.get(data.name)) {
+                            socket.emit('callback', 'join chat',
+                                {accepted: false, error: 'Sorry, the user name ' + data.name + ' is already in use'});
+                        } else {
+                            console.log(data.name + ' joined the chat');
+                            socket.chatter =  new chat.Chatter(data);
+                            socket.join(chat.chat_name);
+                            self.io.sockets.to(chat.chat_name).emit('new chatter', data);
+                            console.log(chat.messages);
+                            socket.emit('initialize history', { chat_name: chat.chat_name,
+                                                                chatters: chat.chatters,
+                                                                messages: chat.messages});
+                            socket.emit('callback', 'join chat', {accepted: true});
+                            self.setupEvents(socket, chat);
+                        }
+                    } else {
+                        socket.emit('callback', 'join chat',
+                            {accepted: false, error: 'Sorry, the chat no longer exists'});
+                    }
+                } else {
+                    socket.emit('callback', 'join chat',
+                        {accepted: false, error: 'Sorry, the join request was invalid'});
+                }
+            });
+        });
+    };
+
+    self.setupEvents = function (socket, chat) {
+        socket.on('new message', function (data) {
+            self.io.of('/').in(chat.chat_name).clients(function(error, clients){
+                console.log('connections: ' + clients.length);
+            });
+            var message = new chat.Message(data);
+            console.log('message data:', data);
+            self.io.sockets.to(chat.chat_name).emit('new message', data);
+        });
+        socket.on('crypted message', function (data) {
+            self.io.of('/').in(chat.chat_name).clients(function(error, clients){
+                console.log('connections: ' + clients.length);
+            });
+            var message = new chat.Message(data);
+            console.log('message data:', data);
+            self.io.sockets.to(chat.chat_name).emit('crypted message', data);
+        });
+
+        var disconnect = function() {
+            console.log('disconnect');
+            if (socket.chatter) {
+                var name = socket.chatter.name;
+                var message = new chat.Message({text: name + ' has left the chat'});
+                self.io.sockets.to(chat.chat_name).emit('new message', message);
+                chat.chatters.destroy(socket.chatter.name);
+                socket.leave(chat.chat_name);
+                self.io.sockets.to(chat.chat_name).emit('chatter disconnected', {name: name});
+                // reset chat if everyone has left
+                if (chat.chatters.length === 0 && socket.chat_url) {
+                    self.chats[socket.chat_url] = undefined;
+                }
+            }
+        };
+        socket.on('disconnect', disconnect);
+        socket.on('leave chat', disconnect);
+
+        socket.on('username changed', function(data) {
+            chat.systemMessage(data.old_name + ' changed name for ' + data.new_name, self.io);
+        });
+
+        socket.on('clear messages', function() {
+                            console.log('clear messages');
+            chat.messages = [];
+            self.io.sockets.to(chat.chat_name).emit('clear messages');
         });
         self.io.sockets.to(chat.chat_name).emit('new message', message);
         chat.chatters.destroy(socket.chatter.name);

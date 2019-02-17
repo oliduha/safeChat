@@ -89,7 +89,7 @@
 							console.log(res.error);
 							$('.alert').html(res.error).fadeIn(250);
 						} else {
-							window.location = res.redirect + '#' + generateKey();
+							window.location = res.redirect + '#' + generateKey(chat_name);
 						}
 					});
         });
@@ -230,5 +230,4 @@
     </div>
   </div>
 </body>
-
 </html>
