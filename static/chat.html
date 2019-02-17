@@ -1,120 +1,122 @@
 <!DOCTYPE html>
+
 <head>
-	<title>SafeChat</title>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!--<link href="bootstrap-combined.min.css" rel="stylesheet">-->
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
-	 crossorigin="anonymous" />
-	<link rel="stylesheet" href="style.css" />
-	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-	 crossorigin="anonymous"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
-	 crossorigin="anonymous"></script>
-	<script src="/socket.io/socket.io.js" crossorigin="anonymous"></script>
-	<!--<script src="gibberish-aes-1.0.0.min.js"></script>-->
-	<script src="sodium.js"></script>
-	<script src="chat.js"></script>
+  <title>SafeChat</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--<link href="bootstrap-combined.min.css" rel="stylesheet">-->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+    crossorigin="anonymous"></script>
+  <script src="/socket.io/socket.io.js" crossorigin="anonymous"></script>
+  <!--<script src="gibberish-aes-1.0.0.min.js"></script>-->
+  <script src="sodium.js"></script>
+  <script src="chat.js"></script>
 </head>
 
 <body ng-app>
-	<div class="container" ng-controller="Chat">
+  <div class="container" ng-controller="Chat">
 
-		<div class="left-column">
-			<button class="btn compact-only" ng-click="hideSidebar()"><i class="icon-chevron-left"></i></button>
-			<img src="safechat.png" class="logo" alt="logo SafeChat" />
-			<ul class="nav nav-tabs">
-				<li ng-repeat="chatter in chatters">
-					<a class="color-{{chatter.id % 6}} {{chatter.isMe()}}">{{chatter.name}}</a>
-				</li>
-			</ul>
-			<button class="btn btn-danger" ng-show="my_username" ng-click="clearMessages()">
-				<i class="icon-trash icon-white"></i> Clear Messages
-			</button><br />
-			<button class="btn" ng-class="{'btn-success': locked}" ng-show="my_username" ng-click="toggleLocked()">
-				<i class="icon-lock" ng-class="{'icon-white': locked}"></i>
-				<span ng-show="locked">Unlock</span>
-				<span ng-hide="locked">Lock</span>
-				Chat
-			</button><br />
-			<button class="btn" ng-show="my_username" ng-click="leaveChat()">
-				<i class="icon-arrow-left"></i> Leave Chat
-			</button><br />
-			<a class="hidden" href="#username_modal" ng-show="my_username" data-toggle="modal">
-				Change User Name
-			</a>
-		</div>
+    <div class="left-column">
+      <button class="btn compact-only" ng-click="hideSidebar()"><i class="icon-chevron-left"></i></button>
+      <img src="safechat.png" class="logo" alt="logo SafeChat" />
+      <ul class="nav nav-tabs">
+        <li ng-repeat="chatter in chatters">
+          <a class="color-{{chatter.id % 6}} {{chatter.isMe()}}">{{chatter.name}}</a>
+        </li>
+      </ul>
+      <button class="btn btn-danger" ng-show="my_username" ng-click="clearMessages()">
+        <i class="icon-trash icon-white"></i> Clear Messages
+      </button><br />
+      <button class="btn" ng-class="{'btn-success': locked}" ng-show="my_username" ng-click="toggleLocked()">
+        <i class="icon-lock" ng-class="{'icon-white': locked}"></i>
+        <span ng-show="locked">Unlock</span>
+        <span ng-hide="locked">Lock</span>
+        Chat
+      </button><br />
+      <button class="btn" ng-show="my_username" ng-click="leaveChat()">
+        <i class="icon-arrow-left"></i> Leave Chat
+      </button><br />
+      <a class="hidden" href="#username_modal" ng-show="my_username" data-toggle="modal">
+        Change User Name
+      </a>
+    </div>
 
-		<div class="right-column">
-			<div class="title-bar">
-				<button class="btn compact-only" ng-show="my_username" ng-click="showSidebar()">
-					<i class="icon-chevron-right"></i>
-				</button>
-				<h1>{{chat_name}}</h1>
-			</div>
-			<div class="messages-box" id="messages-box">
-				<div class="message row-fluid" ng-hide="messages.length > 0">
-					<div class="message-text">
-						Securely send this address to the people you want to chat with: <br /><br />
-						<input id="urlTxt" type="text" value="{{page_url}}" />
-						<button id="btnCopy" class="btn" ng-click="copyUrl()"><img src="clippy.png" alt="Copy URL" title="Copy URL"/></button>
-					</div>
-				</div>
-				<div class="message row-fluid color-{{chatters.get(message.sender).id % 6}} {{chatters.get(message.sender).isMe()}}"
-				 ng-repeat="message in messages | orderBy: 'time'">
-					<strong class="sender span3">
-						<!--ng-hide="message.sender == undefined"--><small>{{message.timeString()}}</small>{{message.sender}}</strong>
-					<div class="message-text span9">{{message.text}}</div>
-				</div>
-			</div>
-			<form class="chat-box" ng-submit="sendMessage()">
-				<textarea id="message_textarea" ng-show="my_username" ng-model="message_text"></textarea>
-				<input type="submit" value="send" class="btn" ng-show="my_username" />
-				<button data-target="#username_modal" class="btn btn-large" ng-hide="locked || my_username" data-toggle="modal">
-					Join the conversation
-				</button>
-			</form>
-		</div>
+    <div class="right-column">
+      <div class="title-bar">
+        <button class="btn compact-only" ng-show="my_username" ng-click="showSidebar()">
+          <i class="icon-chevron-right"></i>
+        </button>
+        <h1>{{chat_name}}</h1>
+      </div>
+      <div class="messages-box" id="messages-box">
+        <div class="message row-fluid" ng-hide="messages.length > 0">
+          <div class="message-text">
+            Securely send this address to the people you want to chat with: <br /><br />
+            <input id="urlTxt" type="text" value="{{page_url}}" />
+            <button id="btnCopy" class="btn" ng-click="copyUrl()"><img src="clippy.png" alt="Copy URL" title="Copy URL" /></button>
+          </div>
+        </div>
+        <div class="message row-fluid color-{{chatters.get(message.sender).id % 6}} {{chatters.get(message.sender).isMe()}}"
+          ng-repeat="message in messages | orderBy: 'time'">
+          <strong class="sender span3">
+            <!--ng-hide="message.sender == undefined"--><small>{{message.timeString()}}</small>{{message.sender}}</strong>
+          <div class="message-text span9">{{message.text}}</div>
+        </div>
+      </div>
+      <form class="chat-box" ng-submit="sendMessage()">
+        <textarea id="message_textarea" ng-show="my_username" ng-model="message_text"></textarea>
+        <input type="submit" value="send" class="btn" ng-show="my_username" />
+        <button data-target="#username_modal" class="btn btn-large" ng-hide="locked || my_username" data-toggle="modal">
+          Join the conversation
+        </button>
+      </form>
+    </div>
 
-		<!-- Username Modal -->
-		<div id="username_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h3>Set Username</h3>
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					</div>
-					<div class="modal-body">
-						<div class="alert alert-danger" ng-show="username_error">{{username_error}}</div>
-						<input class="username" type="text" placeholder="Type a user name here" ng-model="new_username" ng-disabled="join_loading" />
-					</div>
-					<div class="modal-footer">
-						<i class="icon-loading" ng-show="join_loading"></i>
-						<button class="btn btn-inverse" ng-disabled="join_loading" ng-click="setUsername()">Join</button>
-					</div>
-				</div>
-			</div>
-		</div>
+    <!-- Username Modal -->
+    <div id="username_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Set Username</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-danger" ng-show="username_error">{{username_error}}</div>
+            <input class="username" type="text" placeholder="Type a user name here" ng-model="new_username" ng-disabled="join_loading" />
+          </div>
+          <div class="modal-footer">
+            <i class="icon-loading" ng-show="join_loading"></i>
+            <button class="btn btn-inverse" ng-disabled="join_loading" ng-click="setUsername()">Join</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-		<!-- Confirm Modal -->
-		<div id="confirm_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h3>{{confirm_modal.title}}</h3>
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					</div>
-					<div class="modal-body">
-						{{confirm_modal.message}}
-					</div>
-					<div class="modal-footer">
-						<button href="#" class="btn" ng-click="confirm_modal.respond(false)">No</button>
-						<button href="#" class="btn btn-inverse" ng-click="confirm_modal.respond(true)">Yes</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <!-- Confirm Modal -->
+    <div id="confirm_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>{{confirm_modal.title}}</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          </div>
+          <div class="modal-body">
+            {{confirm_modal.message}}
+          </div>
+          <div class="modal-footer">
+            <button href="#" class="btn" ng-click="confirm_modal.respond(false)">No</button>
+            <button href="#" class="btn btn-inverse" ng-click="confirm_modal.respond(true)">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
+
 </html>

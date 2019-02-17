@@ -1,3 +1,4 @@
+/*eslint linebreak-style: ["error", "windows"]*/
 /*global window, location, self, document, io, GibberishAES, sodium, $*/
 function Chat($scope) {
   if (!$scope.server) {
