@@ -1,8 +1,10 @@
-#!/bin/env node
+/*eslint linebreak-style: ["error", "windows"]*/
 
 var express = require('express');
+var debug = require('debug')('*');
 var fs = require('fs');
 var makeChat = require('./static/chat.js');
+var sodium = require('libsodium-wrappers');
 
 /**
  *  Define the sample application.
@@ -22,10 +24,10 @@ var ChatApp = function () {
     if (typeof self.ipaddress === 'undefined') {
       //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
       //  allows us to run/test the app locally.
-      console.warn('No OPENSHIFT_INTERNAL_IP var, using 127.0.0.1');
+      debug('No OPENSHIFT_INTERNAL_IP var, using 127.0.0.1');
       self.ipaddress = '127.0.0.1';
     }
-    console.log(self.ipaddress + ':' + self.port);
+    debug(self.ipaddress + ':' + self.port);
   };
 
   /**
@@ -87,11 +89,11 @@ var ChatApp = function () {
    */
   self.terminator = function (sig) {
     if (typeof sig === 'string') {
-      console.log('%s: Received %s - terminating sample app ...',
+      debug('%s: Received %s - terminating sample app ...',
         Date(Date.now()), sig);
       process.exit(1);
     }
-    console.log('%s: Node server stopped!', Date(Date.now()));
+    debug('%s: Node server stopped!', Date(Date.now()));
   };
 
 
@@ -104,7 +106,6 @@ var ChatApp = function () {
       self.terminator();
     });
     // Removed 'SIGPIPE' from the list - bugz 852598.
-    /*eslint no-unused-vars: "error"*/
     ['SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
       'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
     ].forEach(function (element, index, array) { // eslint-disable-line no-unused-vars
@@ -128,7 +129,16 @@ var ChatApp = function () {
     self.routes['/new/*'] = function (req, res) {
       res.setHeader('Content-Type', 'application/json');
       var slice_point = req.url.lastIndexOf('/new/');
-      var chat_url = req.url.slice(slice_point + 5);
+      var slice_point_p = req.url.indexOf('&');
+      // debug('req: %O', req);
+      // debug('**req url**:', req.url);
+      var pass = '';
+      if (slice_point_p > 0) {
+        pass = req.url.slice(slice_point_p + 1);
+      }
+      // debug('*chat pass:', pass);
+      var chat_url = req.url.slice(slice_point + 5, slice_point_p);
+      // debug('*chat url:', chat_url);
       if (slice_point >= 0) {
         if (self.chats[chat_url]) {
           res.send({
@@ -136,7 +146,9 @@ var ChatApp = function () {
           });
         } else {
           var chat_name = chat_url.split('_').join(' ');
-          self.chats[chat_url] = self.createChat(chat_name);
+          //debug('Creating chat with: %s %s', chat_name, pass);
+          self.chats[chat_url] = self.createChat(chat_name, pass);
+          //debug('Created chat: %O', self.chats[chat_url]);
           res.send({
             redirect: chat_url
           });
@@ -151,14 +163,14 @@ var ChatApp = function () {
     /*
     // Add routes for uncached image files
     for (var i=0; i<self.image_files.length; i++) {
-        console.log('Creating uncached route for ' + self.image_files[i]);
+        debug('Creating uncached route for ' + self.image_files[i]);
         self.routes['/' + self.image_files[i]] = self.createUncachedRoute('./images/' + self.image_files[i]);
     }
     */
 
     // Add routes for static files in cache
     for (var i = 0; i < self.static_files.length; i++) {
-      console.log('Creating cached route for ' + self.static_files[i]);
+      debug('Creating cached route for %s', self.static_files[i]);
       self.routes['/' + self.static_files[i]] = self.createStaticRoute(self.static_files[i]);
     }
 
@@ -169,12 +181,12 @@ var ChatApp = function () {
         slice_point = undefined;
       }
       var chat_url = req.url.substring(1, slice_point);
-      console.log(chat_url + ' requested');
+      debug('%s requested', chat_url);
       if (self.chats[chat_url]) {
         self.createStaticRoute('chat.html')(req, res);
       } else {
         res.status(302);
-        console.log('redirecting to https://' + req.headers.host);
+        debug('redirecting to https://%s', req.headers.host);
         res.setHeader('Location', 'https://' + req.headers.host);
         res.setHeader('Content-Type', 'text/html');
         var error_page = '<html><body style="';
@@ -194,7 +206,7 @@ var ChatApp = function () {
       res.setHeader('Content-Type', mime_type);
       fs.readFile(uncached_file, function (err, data) {
         if (err) {
-          console.log('Unable to read file ' + uncached_file);
+          debug('Unable to read file %s', uncached_file);
           res.send('');
         } else {
           res.send(data);
@@ -209,7 +221,7 @@ var ChatApp = function () {
       if (mime_type === undefined) {
         mime_type = 'text/plain';
       }
-      console.log(static_file, mime_type);
+      debug(static_file, mime_type);
       res.setHeader('Content-Type', mime_type);
       res.send(self.cache_get(static_file));
     };
@@ -238,20 +250,25 @@ var ChatApp = function () {
     return file_name;
   };
 
-  self.createChat = function (chat_name) {
+  self.createChat = function (chat_name, pw) {
+    // debug('pw:', pw);
     var chat = makeChat({
       server: true,
-      chat_name: chat_name
+      chat_name: chat_name,
+      chat_pass: pw
     });
-    //console.log(chat);
+    // debug(chat);
     chat.systemMessage('Chat created', self.io);
     return chat;
   };
 
   self.listenForConnections = function () {
     self.io.sockets.on('connection', function (socket) {
+      self.cnxCount();
+      //debug('chat_name?', socket.handshake.headers.referer.slice(socket.handshake.headers.referer.lastIndexOf('/') + 1));
+      debug('New Connexion id: %s - ref: %O', socket.id, socket.handshake.headers.referer);
       socket.on('check if locked', function (data) {
-        console.log('checking if locked: ' + data.chat_url);
+        debug('checking if locked: %s', data.chat_url);
         if (data.chat_url && self.chats[data.chat_url]) {
           socket.chat_url = data.chat_url;
           if (self.chats[data.chat_url].locked) {
@@ -263,11 +280,11 @@ var ChatApp = function () {
             socket.emit('chat unlocked');
           }
         } else {
-          console.log('bad request');
+          debug('bad request');
         }
       });
       socket.on('join chat', function (data) {
-        console.log('data.name:', data.name);
+        // debug('data.name: %s', data.name);
         if (!data.name) {
           socket.emit('callback', 'join chat', {
             accepted: false,
@@ -283,17 +300,51 @@ var ChatApp = function () {
                 accepted: false,
                 error: 'Sorry, the chat has been locked'
               });
+              // send data to the locked chat members
+              self.io.sockets.to(chat.chat_name).emit('locked try', data);
             } else if (chat.chatters.get(data.name)) {
               socket.emit('callback', 'join chat', {
                 accepted: false,
                 error: 'Sorry, the user name ' + data.name + ' is already in use'
               });
+            } else if (chat.chat_pass && !data.chat_pass) {
+              debug('pass requested w/o password!');
+              socket.emit('callback', 'join chat', {
+                accepted: false,
+                error: 'This chat require a password to connect to it'
+              });
             } else {
-              console.log(data.name + ' joined the chat');
+              // debug('chat: %O', chat);
+              // (async() => {
+              //   await _sodium.ready;
+              //   const sodium = _sodium;
+              if (chat.chat_pass) {
+                debug('pass requested');
+                debug('pass request data: %O', data);
+                var hash = sodium.to_string(sodium.from_base64(chat.chat_pass));
+                console.log('hash:', hash);
+                var pw = sodium.to_string(sodium.from_base64(data.chat_pass));
+                // console.log('pw:', pw);
+                // console.log('hash === pw:', hash === pw);
+                // console.log('compare:', sodium.from_string(hash), sodium.from_string(pw), sodium.compare(sodium.from_string(hash), sodium.from_string(pw)));
+                if (sodium.crypto_pwhash_str_verify(hash, pw)) {
+                  console.log('Password OK!');
+                } else if (sodium.from_string(hash).length === sodium.from_string(pw).length && sodium.compare(sodium.from_string(hash), sodium.from_string(pw)) === 0) {
+                  console.log('Password OK!');
+                } else {
+                  console.log('Wrong password!');
+                  socket.emit('callback', 'join chat', {
+                    accepted: false,
+                    error: 'Wrong password'
+                  });
+                  return false;
+                }
+              }
+              debug('%s joined the chat', data.name);
               socket.chatter = new chat.Chatter(data);
               socket.join(chat.chat_name);
               self.io.sockets.to(chat.chat_name).emit('new chatter', data);
-              console.log(chat.messages);
+              // debug('chat messages: %O', chat.messages);
               socket.emit('initialize history', {
                 chat_name: chat.chat_name,
                 chatters: chat.chatters,
@@ -303,6 +354,7 @@ var ChatApp = function () {
                 accepted: true
               });
               self.setupEvents(socket, chat);
+              // })();
             }
           } else {
             socket.emit('callback', 'join chat', {
@@ -320,27 +372,35 @@ var ChatApp = function () {
     });
   };
 
-  self.setupEvents = function (socket, chat) {
-    socket.on('new message', function (data) {
-      self.io.of('/').in(chat.chat_name).clients(function (error, clients) {
-        console.log('connections: ' + clients.length);
+  self.cnxCount = function(chatName) {
+    if (chatName) {
+      self.io.of('/').in(chatName).clients(function (error, clients) {
+        debug('connections in %s: %d', chatName, clients.length);
+        self.io.sockets.to(chatName).emit('count cnx', clients.length);
       });
+      self.io.of('/').clients(function (error, clients) {
+        debug('total connections: %d', clients.length);
+        self.io.sockets.to('/').in(chatName).emit('count totcnx', clients.length);
+      });
+    }
+  };
+
+  self.setupEvents = function (socket, chat) {
+    self.cnxCount(chat.chat_name);
+    socket.on('new message', function (data) {
       /* var message =  */new chat.Message(data);
-      console.log('redirecting new message data:', data);
+      debug('redirecting new message data: %O', data);
       self.io.sockets.to(chat.chat_name).emit('new message', data);
     });
 
     socket.on('encrypted message', function (data) {
-      self.io.of('/').in(chat.chat_name).clients(function (error, clients) {
-        console.log('connections: ' + clients.length);
-      });
       /* var message =  */new chat.Message(data);
-      console.log('redirecting encrypted message data:', data);
+      debug('redirecting encrypted message data: %O', data);
       self.io.sockets.to(chat.chat_name).emit('encrypted message', data);
     });
 
     var disconnect = function () {
-      console.log('disconnect');
+      debug('disconnect');
       if (socket.chatter) {
         var name = socket.chatter.name;
         var message = new chat.Message({
@@ -352,9 +412,15 @@ var ChatApp = function () {
         self.io.sockets.to(chat.chat_name).emit('chatter disconnected', {
           name: name
         });
+        // send nb cnx
+        self.cnxCount(chat.chat_name);
+
         // reset chat if everyone has left
-        if (chat.chatters.length === 0 && socket.chat_url) {
-          self.chats[socket.chat_url] = undefined;
+        if (chat.chatters.length === 0) {
+          // clearInterval(toCountChatters);
+          if (socket.chat_url) {
+            self.chats[socket.chat_url] = undefined;
+          }
         }
       }
     };
@@ -366,21 +432,22 @@ var ChatApp = function () {
     });
 
     socket.on('clear messages', function () {
-      console.log('clear messages');
+      debug('clear messages');
       chat.messages = [];
       self.io.sockets.to(chat.chat_name).emit('clear messages');
     });
     socket.on('lock chat', function () {
+      debug('%s locked the chat', socket.chatter.name);
       chat.locked = true;
       self.io.sockets.to(chat.chat_name).emit('chat locked');
       chat.systemMessage(socket.chatter.name + ' has locked the chat', self.io);
     });
     socket.on('unlock chat', function () {
+      debug('%s unlocked the chat', chat.chat_name);
       chat.locked = false;
       self.io.sockets.to(chat.chat_name).emit('chat unlocked');
       chat.systemMessage(socket.chatter.name + ' has unlocked the chat', self.io);
     });
-    console.log('end setup');
   };
 
   /**
@@ -403,17 +470,15 @@ var ChatApp = function () {
       if (req.secure) {
         next();
       } else {
-        console.log(req.headers.host);
+        // debug(req.headers.host);
         var slice_point = req.headers.host.lastIndexOf(':');
         var host = req.headers.host.slice(0, slice_point);
-        console.log('requested: http://' + req.headers.host + ' -> redirected to: https://' + host + ':' + self.port);
+        debug('requested: http://%s -> redirected to: https://%s:%s', req.headers.host, host, self.port);
         res.redirect('https://' + host + ':' + self.port);
       }
     });
 
-    // console.log('BEFORE');
     self.io = require('socket.io').listen(self.server);
-    // console.log('AFTER');
     self.chats = {};
     // self.chats.DaveChat = self.createChat('DaveChat');
     self.listenForConnections();
@@ -445,11 +510,11 @@ var ChatApp = function () {
   self.start = function () {
     //  Start the app on the specific interface (and port).
     self.server.listen(self.port, self.ipaddress, function () {
-      console.log('%s: Node server https started on %s:%d ...',
+      debug('%s: Node server https started on %s:%d ...',
         Date(Date.now()), self.ipaddress, self.port);
     });
     self.serverhttp.listen(self.httpport, self.ipaddress, function () {
-      console.log('%s: Node server http started on %s:%d ...',
+      debug('%s: Node server http started on %s:%d ...',
         Date(Date.now()), self.ipaddress, self.httpport);
     });
   };
