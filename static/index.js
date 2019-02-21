@@ -60,8 +60,8 @@ $(document).ready(function () {
     if (spw && spw !== '') {
       pw = sodium.crypto_pwhash_str(
         spw,
-        sodium.crypto_pwhash_OPSLIMIT_MODERATE,
-        sodium.crypto_pwhash_MEMLIMIT_MODERATE
+        sodium.crypto_pwhash_OPSLIMIT_INTERACTIVE,
+        sodium.crypto_pwhash_MEMLIMIT_INTERACTIVE
       );
       // console.log(sodium.crypto_pwhash_str_verify(sodium.from_base64(pw), spw));
       if (sodium.crypto_pwhash_str_verify(pw, spw)) {

@@ -311,7 +311,7 @@ function Chat($scope) {
     };
 
     // Set username on enter key
-    $('#username_modal .username').keypress(function (event) {
+    $('#username_modal .userinput').keypress(function (event) {
       if (event.which === 13) {
         event.preventDefault();
         $scope.setUsername();

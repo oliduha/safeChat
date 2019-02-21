@@ -52,12 +52,18 @@ a img {
   #tot_cnx {
     position: absolute;
     top: 20px;
-    left: 24px;
+    left: 12px;
+    @media screen and (min-width: $hide-sidebar) {
+      left: 24px;
+    }
   }
   #nb_cnx {
     position: absolute;
     top: 20px;
-    right: 24px;
+    right: 58px;
+    @media screen and (min-width: $hide-sidebar) {
+      right: 24px;
+    }
   }
 	.nav {
 		margin-top: 10px;
@@ -246,6 +252,9 @@ a img {
 	.btn-large {
 		margin-bottom: 10px;
 	}
+}
+.icon-white {
+  color: #fff;
 }
 .color-0 {
 	color: rgb(127, 0, 0) !important;

@@ -5,12 +5,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!--<link href="bootstrap-combined.min.css" rel="stylesheet">-->
+  <!-- <link rel="stylesheet" href="/open-iconic/font/css/open-iconic-bootstrap.css"> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" integrity="sha256-BJ/G+e+y7bQdrYkS2RBTyNfBHpA9IuGaPmf9htub5MQ=" crossorigin="anonymous" />
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
     crossorigin="anonymous" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
     crossorigin="anonymous"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
     crossorigin="anonymous"></script>
   <script src="/socket.io/socket.io.js" crossorigin="anonymous"></script>
@@ -33,8 +36,8 @@
           </div>
           <div class="modal-body">
             <div class="alert alert-danger" ng-show="username_error">{{username_error}}</div>
-            <input id="user_name" class="username" type="text" placeholder="Type a user name here" ng-model="new_username" ng-disabled="join_loading" />
-            <input id="chat_pass" class="chatpass" type="text" placeholder="Type the password (if required)" ng-disabled="join_loading" />
+            <input id="user_name" class="userinput username" type="text" placeholder="Type a user name here" ng-model="new_username" ng-disabled="join_loading" />
+            <input id="chat_pass" class="userinput chatpass" type="text" placeholder="Type the password (if required)" ng-disabled="join_loading" />
           </div>
           <div class="modal-footer">
             <i class="icon-loading" ng-show="join_loading"></i>
@@ -45,7 +48,10 @@
     </div>
 
     <div class="left-column">
-      <button class="btn btn-outline-secondary btn-sm compact-only" ng-click="hideSidebar()"><i class="icon-chevron-left">&lt;</i></button>
+      <button class="btn btn-outline-secondary btn-sm compact-only" ng-click="hideSidebar()">
+        <!-- <i class="icon-chevron-left">&lt;</i> -->
+        <span class="oi oi-chevron-left" title="Hide sidebar" aria-hidden="true"></span>
+      </button>
       <img src="safechat.png" class="logo" alt="logo SafeChat" />
       <span id="tot_cnx" class="badge badge-pill badge-dark" title="Total connexions">{{totCnx}}</span>
       <span id="nb_cnx" class="badge badge-pill badge-warning" title="Connexions in this chat">{{nbCnx}}</span>
@@ -55,16 +61,26 @@
         </li>
       </ul>
       <button class="btn btn-danger" ng-show="my_username" ng-click="clearMessages()">
-        <i class="icon-trash icon-white"></i> Clear Messages
+        <!-- <i class="icon-trash icon-white"></i> Clear Messages -->
+        <span class="oi oi-trash icon-white" aria-hidden="true"></span> Clear Messages
       </button><br />
-      <button class="btn" ng-class="{'btn-success': locked}" ng-show="my_username" ng-click="toggleLocked()">
-        <i class="icon-lock" ng-class="{'icon-white': locked}"></i>
-        <span ng-show="locked">Unlock</span>
-        <span ng-hide="locked">Lock</span>
-        Chat
-      </button><br />
-      <button class="btn" ng-show="my_username" ng-click="leaveChat()">
-        <i class="icon-arrow-left"></i> Leave Chat
+      <button class="btn btn-outline-warning" ng-show="my_username && !locked" ng-click="toggleLocked()">
+        <!-- <i class="icon-lock" ng-class="{'icon-white': locked}"></i> -->
+        <span class="oi oi-lock-unlocked" aria-hidden="true" ng-hide="locked"></span>
+        <!-- <span ng-show="locked">Unlock</span> -->
+        <span ng-hide="locked">Lock Chat</span>
+
+      </button>
+      <button class="btn btn-warning" ng-show="my_username && locked" ng-click="toggleLocked()">
+        <!-- <i class="icon-lock" ng-class="{'icon-white': locked}"></i> -->
+        <span class="oi oi-lock-locked" aria-hidden="true" ng-show="locked"></span>
+        <span ng-show="locked">Unlock Chat</span>
+
+      </button>
+      <br />
+      <button class="btn btn-outline-dark" ng-show="my_username" ng-click="leaveChat()">
+        <!-- <i class="icon-arrow-left"></i> Leave Chat -->
+        <span class="oi oi-arrow-left" aria-hidden="true"></span> Leave Chat
       </button><br />
       <a class="hidden" href="#username_modal" ng-show="my_username" data-toggle="modal">
         Change User Name
@@ -74,7 +90,8 @@
     <div class="right-column">
       <div class="title-bar">
         <button class="btn btn-outline-secondary btn-sm compact-only" ng-show="my_username" ng-click="showSidebar()">
-          <i class="icon-chevron-right">&gt;</i>
+          <!-- <i class="icon-chevron-right">&gt;</i> -->
+          <span class="oi oi-chevron-right" title="Show sidebar" aria-hidden="true"></span>
         </button>
         <h1>{{chat_name}}</h1>
       </div>

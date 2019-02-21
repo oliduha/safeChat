@@ -51,12 +51,22 @@ a img {
 .left-column #tot_cnx {
   position: absolute;
   top: 20px;
-  left: 24px;
+  left: 12px;
+}
+@media screen and (min-width: 600px) {
+  .left-column #tot_cnx {
+    left: 24px;
+  }
 }
 .left-column #nb_cnx {
   position: absolute;
   top: 20px;
-  right: 24px;
+  right: 58px;
+}
+@media screen and (min-width: 600px) {
+  .left-column #nb_cnx {
+    right: 24px;
+  }
 }
 .left-column .nav {
   margin-top: 10px;
@@ -270,6 +280,10 @@ a img {
 }
 .chat-box .btn-large {
   margin-bottom: 10px;
+}
+
+.icon-white {
+  color: #fff;
 }
 
 .color-0 {
