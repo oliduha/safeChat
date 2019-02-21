@@ -1,16 +1,20 @@
+/* jshint esversion: 6 */
+/* eslint-env es6 */
 /*eslint linebreak-style: ["error", "windows"]*/
 /*global window, document, sodium, $*/
 
+/* jshint ignore:start */
 async function generateKey() {
-  var rb = await sodium.randombytes_buf(16);
-  var res =  await sodium.to_hex(rb);
+  var rbb = await sodium.randombytes_buf(16);
+  var res =  await sodium.to_hex(rbb);
   return res;
 }
 async function gen_name() {
-  var rb = await sodium.randombytes_buf(16);
-  var res = await sodium.to_hex(rb).toString();
+  var rbb = await sodium.randombytes_buf(16);
+  var res = await sodium.to_hex(rbb).toString();
   return Promise.resolve(res);
 }
+/* jshint ignore:end */
 
 $(document).ready(function () {
   $('.alert').hide();
