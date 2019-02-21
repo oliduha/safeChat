@@ -48,7 +48,17 @@ a img {
 	.logo {
 		width: 171px;
 		height: 127px;
-	}
+  }
+  #tot_cnx {
+    position: absolute;
+    top: 20px;
+    left: 24px;
+  }
+  #nb_cnx {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+  }
 	.nav {
 		margin-top: 10px;
 		margin-bottom: 10px;
@@ -122,9 +132,11 @@ a img {
 	z-index: 10;
 	line-height: 60px;
 	h1 {
-		display: inline;
+		display: block;
 		font-size: 25px;
-		padding-left: 5px;
+    padding-left: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 	}
 	/*
 	@media screen and (min-width: $narrow) {
@@ -136,7 +148,7 @@ a img {
 	}
 	*/
 	button {
-		margin: 0px 5px 10px 5px;
+    margin: 0px 5px 10px 5px;
 	}
 }
 .messages-box {
@@ -148,12 +160,17 @@ a img {
 		border-bottom: 1px solid $gray;
 		padding: 3px 0px;
 		.sender {
-			overflow: hidden;
+      overflow: hidden;
+      display: block;
 			small {
 				opacity: 0.75;
-				&:after {
+				&:before {
 					content: " ";
-					display: inline;
+					display: block;
+        }
+        &:after {
+					content: " ";
+					display: block;
 				}
 				@media screen and (max-width: $narrow) {
 					float: right;
@@ -162,27 +179,26 @@ a img {
 			}
 		}
 		.message-text {
+      text-align: left;
 			margin-left: 0px;
-			input {
-				width:93%;
+			@media screen and (max-width: $narrow) {
+				text-align: right;
 			}
-			button#btn-copy {
-				width: 5%;
-				padding: 0;
-				height: 24px;
-				margin-bottom: 5px;
+			input {
+				margin: 3px 0;
+				width:100%;
 			}
 			button > img {
-				width: 16px;
-				height: 16px;
-				margin-bottom: 5px;
+				width: 24px;
+				height: 24px;
+				margin-bottom: 2px;
 			}
 		}
 	}
 	.is_me {
 		.message-text {
 			@media screen and (max-width: $narrow) {
-				text-align: right;
+				text-align: left;
 			}
 		}
 	}
@@ -193,23 +209,23 @@ a img {
 .chat-box {
 	margin: 0px;
 	position: fixed;
-	bottom: 0px;
+	bottom: 2px;
 	background-color: white;
 	padding-top: 5px;
 	text-align: center;
 	textarea {
-		max-height: 50px;
-		min-height: 50px;
-		max-width: $right-column-width - 150px;
-		min-width: $right-column-width - 150px;
+		max-height: 62px;
+		min-height: 62px;
+		max-width: $right-column-width - 130px;
+		min-width: $right-column-width - 130px;
 		padding: 5px;
 		@media screen and (min-width: $wide) {
-			max-width: (1.4*$right-column-width) - 150px;
-			min-width: (1.4*$right-column-width) - 150px;
+			max-width: (1.4*$right-column-width) - 130px;
+			min-width: (1.4*$right-column-width) - 130px;
 		}
 		@media screen and (max-width: $narrow) {
-			max-width: (2*$right-column-width/3) - 100px;
-			min-width: (2*$right-column-width/3) - 100px;
+			max-width: (2*$right-column-width/3) - 90px;
+			min-width: (2*$right-column-width/3) - 90px;
 		}
 		@media screen and (max-width: $phone) {
 			max-width: ($right-column-width*0.55) - 80px;
@@ -250,12 +266,14 @@ a img {
 	color: rgb(127, 74, 0) !important;
 }
 .modal {
+  //position: relative !important;
+  //left: unset !important;
 	@media screen and (min-width: 768px) {
-		width: 400px;
+		// width: 400px;
 		// margin-left: 200px;
 	}
-	.username {
-		width: 95%;
+	.username, .chatpass {
+		width: 100%;
 	}
 	// .modal-footer {
 		// text-align: center;

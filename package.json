@@ -4,7 +4,7 @@
   "description": "ChatSafe Encrypted Instant Messaging App",
   "scripts": {
     "start": "node server",
-    "watch": "set DEBUG=SafeChat:* & nodemon server"
+    "watch": "set DEBUG=safeChat:*,-engine:* & nodemon server"
   },
   "keywords": [
     "Node.js",
@@ -27,8 +27,10 @@
   "dependencies": {
     "angular": "1.7.x",
     "bootstrap": "3.3.x",
+    "debug": "^4.1.1",
     "express": "^4.16.4",
     "handlebars": "^4.0.12",
+    "jquery": "^3.3.1",
     "libsodium-wrappers": "^0.7.4",
     "socket.io": "^2.2.0"
   },

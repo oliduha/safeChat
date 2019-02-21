@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <head>
   <title>SafeChat</title>
   <meta charset="UTF-8">
@@ -16,35 +17,55 @@
   <!--<script src="gibberish-aes-1.0.0.min.js"></script>-->
   <script src="sodium.js"></script>
   <script src="chat.js"></script>
+  <script src="bundle.js"></script>
 </head>
 
 <body ng-app>
   <div class="container" ng-controller="Chat">
-    
+
+    <!-- Username Modal -->
+    <div id="username_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Set Username</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-danger" ng-show="username_error">{{username_error}}</div>
+            <input id="user_name" class="username" type="text" placeholder="Type a user name here" ng-model="new_username" ng-disabled="join_loading" />
+            <input id="chat_pass" class="chatpass" type="text" placeholder="Type the password (if required)" ng-disabled="join_loading" />
+          </div>
+          <div class="modal-footer">
+            <i class="icon-loading" ng-show="join_loading"></i>
+            <button class="btn btn-outline-primary" ng-disabled="join_loading" ng-click="setUsername()">Join</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="left-column">
-      <button class="btn compact-only" ng-click="hideSidebar()"><i class="icon-chevron-left"></i></button>
+      <button class="btn btn-outline-secondary btn-sm compact-only" ng-click="hideSidebar()"><i class="icon-chevron-left">&lt;</i></button>
       <img src="safechat.png" class="logo" alt="logo SafeChat" />
+      <span id="tot_cnx" class="badge badge-pill badge-dark" title="Total connexions">{{totCnx}}</span>
+      <span id="nb_cnx" class="badge badge-pill badge-warning" title="Connexions in this chat">{{nbCnx}}</span>
       <ul class="nav nav-tabs">
         <li ng-repeat="chatter in chatters">
           <a class="color-{{chatter.id % 6}} {{chatter.isMe()}}">{{chatter.name}}</a>
         </li>
       </ul>
-      
       <button class="btn btn-danger" ng-show="my_username" ng-click="clearMessages()">
         <i class="icon-trash icon-white"></i> Clear Messages
       </button><br />
-      
       <button class="btn" ng-class="{'btn-success': locked}" ng-show="my_username" ng-click="toggleLocked()">
         <i class="icon-lock" ng-class="{'icon-white': locked}"></i>
         <span ng-show="locked">Unlock</span>
         <span ng-hide="locked">Lock</span>
         Chat
       </button><br />
-      
       <button class="btn" ng-show="my_username" ng-click="leaveChat()">
         <i class="icon-arrow-left"></i> Leave Chat
       </button><br />
-      
       <a class="hidden" href="#username_modal" ng-show="my_username" data-toggle="modal">
         Change User Name
       </a>
@@ -52,18 +73,19 @@
 
     <div class="right-column">
       <div class="title-bar">
-        <button class="btn compact-only" ng-show="my_username" ng-click="showSidebar()">
-          <i class="icon-chevron-right"></i>
+        <button class="btn btn-outline-secondary btn-sm compact-only" ng-show="my_username" ng-click="showSidebar()">
+          <i class="icon-chevron-right">&gt;</i>
         </button>
         <h1>{{chat_name}}</h1>
       </div>
-      
       <div class="messages-box" id="messages-box">
         <div class="message row-fluid" ng-hide="messages.length > 0">
           <div class="message-text">
             Securely send this address to the people you want to chat with: <br /><br />
-            <input id="urlTxt" type="text" value="{{page_url}}" />
-            <button id="btnCopy" class="btn" ng-click="copyUrl()"><img src="clippy.png" alt="Copy URL" title="Copy URL" /></button>
+            <input id="urlTxt" type="text" class="form-control form-control-lg" value="{{page_url}}" />
+            <button id="btnCopy" class="btn btn-primary btn-block" ng-click="copyUrl()"><img src="clippy.png" alt="Copy URL" title="Copy URL" /></button>
+            <p>I recommend creating a <a href="https://privnote.com" target="_blank">privnote</a> for every one you want to chat with.</p>
+
           </div>
         </div>
         <div class="message row-fluid color-{{chatters.get(message.sender).id % 6}} {{chatters.get(message.sender).isMe()}}"
@@ -73,34 +95,13 @@
           <div class="message-text span9">{{message.text}}</div>
         </div>
       </div>
-      
       <form class="chat-box" ng-submit="sendMessage()">
         <textarea id="message_textarea" ng-show="my_username" ng-model="message_text"></textarea>
-        <input type="submit" value="send" class="btn" ng-show="my_username" />
-        <button data-target="#username_modal" class="btn btn-large" ng-hide="locked || my_username" data-toggle="modal">
+        <input type="submit" value="send" class="btn btn-success" ng-show="my_username" />
+        <button data-target="#username_modal" class="btn btn-success btn-lg" ng-hide="locked || my_username" data-toggle="modal">
           Join the conversation
         </button>
       </form>
-    </div>
-
-    <!-- Username Modal -->
-    <div id="username_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h3>Set Username</h3>
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          </div>
-          <div class="modal-body">
-            <div class="alert alert-danger" ng-show="username_error">{{username_error}}</div>
-            <input class="username" type="text" placeholder="Type a user name here" ng-model="new_username" ng-disabled="join_loading" />
-          </div>
-          <div class="modal-footer">
-            <i class="icon-loading" ng-show="join_loading"></i>
-            <button class="btn btn-inverse" ng-disabled="join_loading" ng-click="setUsername()">Join</button>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Confirm Modal -->

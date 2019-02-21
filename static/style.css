@@ -48,6 +48,16 @@ a img {
   width: 171px;
   height: 127px;
 }
+.left-column #tot_cnx {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+}
+.left-column #nb_cnx {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+}
 .left-column .nav {
   margin-top: 10px;
   margin-bottom: 10px;
@@ -143,9 +153,11 @@ a img {
   */
 }
 .title-bar h1 {
-  display: inline;
+  display: block;
   font-size: 25px;
   padding-left: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .title-bar button {
   margin: 0px 5px 10px 5px;
@@ -163,13 +175,18 @@ a img {
 }
 .messages-box .message .sender {
   overflow: hidden;
+  display: block;
 }
 .messages-box .message .sender small {
   opacity: 0.75;
 }
+.messages-box .message .sender small:before {
+  content: " ";
+  display: block;
+}
 .messages-box .message .sender small:after {
   content: " ";
-  display: inline;
+  display: block;
 }
 @media screen and (max-width: 767px) {
   .messages-box .message .sender small {
@@ -177,25 +194,26 @@ a img {
   }
 }
 .messages-box .message .message-text {
+  text-align: left;
   margin-left: 0px;
 }
-.messages-box .message .message-text input {
-  width: 93%;
+@media screen and (max-width: 767px) {
+  .messages-box .message .message-text {
+    text-align: right;
+  }
 }
-.messages-box .message .message-text button#btn-copy {
-  width: 5%;
-  padding: 0;
-  height: 24px;
-  margin-bottom: 5px;
+.messages-box .message .message-text input {
+  margin: 3px 0;
+  width: 100%;
 }
 .messages-box .message .message-text button > img {
-  width: 16px;
-  height: 16px;
-  margin-bottom: 5px;
+  width: 24px;
+  height: 24px;
+  margin-bottom: 2px;
 }
 @media screen and (max-width: 767px) {
   .messages-box .is_me .message-text {
-    text-align: right;
+    text-align: left;
   }
 }
 .messages-box .icon-loading {
@@ -205,28 +223,28 @@ a img {
 .chat-box {
   margin: 0px;
   position: fixed;
-  bottom: 0px;
+  bottom: 2px;
   background-color: white;
   padding-top: 5px;
   text-align: center;
 }
 .chat-box textarea {
-  max-height: 50px;
-  min-height: 50px;
-  max-width: 380px;
-  min-width: 380px;
+  max-height: 62px;
+  min-height: 62px;
+  max-width: 400px;
+  min-width: 400px;
   padding: 5px;
 }
 @media screen and (min-width: 1000px) {
   .chat-box textarea {
-    max-width: 592px;
-    min-width: 592px;
+    max-width: 612px;
+    min-width: 612px;
   }
 }
 @media screen and (max-width: 767px) {
   .chat-box textarea {
-    max-width: 253.3333333333px;
-    min-width: 253.3333333333px;
+    max-width: 263.3333333333px;
+    min-width: 263.3333333333px;
   }
 }
 @media screen and (max-width: 365px) {
@@ -278,13 +296,8 @@ a img {
   color: #7f4a00 !important;
 }
 
-@media screen and (min-width: 768px) {
-  .modal {
-    width: 400px;
-  }
-}
-.modal .username {
-  width: 95%;
+.modal .username, .modal .chatpass {
+  width: 100%;
 }
 
 /*# sourceMappingURL=style.css.map */
