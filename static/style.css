@@ -187,6 +187,9 @@ a img {
   overflow: hidden;
   display: block;
 }
+.messages-box .message .sender .danger {
+  display: inline;
+}
 .messages-box .message .sender small {
   opacity: 0.75;
 }
@@ -203,6 +206,10 @@ a img {
     float: right;
   }
 }
+.messages-box .message .sender small .danger {
+  text-align: center;
+  float: none;
+}
 .messages-box .message .message-text {
   text-align: left;
   margin-left: 0px;
@@ -211,6 +218,9 @@ a img {
   .messages-box .message .message-text {
     text-align: right;
   }
+}
+.messages-box .message .message-text .danger {
+  text-align: center;
 }
 .messages-box .message .message-text input {
   margin: 3px 0;
@@ -308,6 +318,19 @@ a img {
 
 .color-5 {
   color: #7f4a00 !important;
+}
+
+.color-null {
+  opacity: 0.75;
+}
+
+.danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  border-radius: 0.25rem;
+  padding-right: 5px !important;
+  text-align: center !important;
 }
 
 .modal .username, .modal .chatpass {

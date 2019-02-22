@@ -105,11 +105,11 @@
 
           </div>
         </div>
-        <div class="message row-fluid color-{{chatters.get(message.sender).id % 6}} {{chatters.get(message.sender).isMe()}}"
+        <div class="message row-fluid color-{{chatters.get(message.sender).id % 6}} {{chatters.get(message.sender).isMe()}} {{message.type}}"
           ng-repeat="message in messages | orderBy: 'time'">
-          <strong class="sender span3">
-            <!--ng-hide="message.sender == undefined"--><small>{{message.timeString()}}</small>{{message.sender}}</strong>
-          <div class="message-text span9">{{message.text}}</div>
+          <strong class="sender span3 {{message.type}}">
+            <!--ng-hide="message.sender == undefined"--><small class="{{message.type}}">{{message.timeString()}}</small>{{message.sender}}</strong>
+          <div class="message-text span9 {{message.type}}">{{message.text}}</div>
         </div>
       </div>
       <form class="chat-box" ng-submit="sendMessage()">

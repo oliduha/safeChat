@@ -18,8 +18,9 @@ var ChatApp = function () {
   self.setupVariables = function () {
     //  Set the environment variables we need.
     self.ipaddress = process.env.OPENSHIFT_INTERNAL_IP || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
-    self.port = process.env.OPENSHIFT_INTERNAL_PORT || process.env.OPENSHIFT_NODEJS_IP || 8043;
-    self.httpport = 8080;
+    // self.port = process.env.OPENSHIFT_INTERNAL_PORT || process.env.OPENSHIFT_NODEJS_IP || 8043;
+    // self.httpport = 8080;
+    self.port = 8080;
 
     if (typeof self.ipaddress === 'undefined') {
       //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
@@ -265,14 +266,24 @@ var ChatApp = function () {
   self.listenForConnections = function () {
     self.io.sockets.on('connection', function (socket) {
       self.cnxCount();
-      //debug('chat_name?', socket.handshake.headers.referer.slice(socket.handshake.headers.referer.lastIndexOf('/') + 1));
+      var chatName = socket.handshake.headers.referer.slice(socket.handshake.headers.referer.lastIndexOf('/') + 1);
       debug('New Connexion id: %s - ref: %O', socket.id, socket.handshake.headers.referer);
       socket.on('check if locked', function (data) {
         debug('checking if locked: %s', data.chat_url);
         if (data.chat_url && self.chats[data.chat_url]) {
           socket.chat_url = data.chat_url;
           if (self.chats[data.chat_url].locked) {
-            socket.emit('chat locked');
+            debug('data.chat_url: %s', data.chat_url);
+            // send data to the locked chat members
+            var chat = self.chats[data.chat_url];
+            if (chat) {
+              var message = new chat.Message({
+                text: (data.name || 'someone') + ' attempted to join while locked',
+                type: 'danger'
+              });
+              self.io.sockets.to(chatName).emit('alert message', message);
+            }
+            self.io.sockets.to(chatName).emit('locked try', data);
             socket.emit('new message', {
               text: 'Sorry, this chat is locked'
             });
@@ -301,7 +312,12 @@ var ChatApp = function () {
                 error: 'Sorry, the chat has been locked'
               });
               // send data to the locked chat members
-              self.io.sockets.to(chat.chat_name).emit('locked try', data);
+              var message = new chat.Message({
+                text: (data.name || 'someone') + ' attempted to join while locked',
+                type: 'danger'
+              });
+              self.io.sockets.to(chatName).emit('alert message', message);
+              self.io.sockets.to(chatName).emit('locked try', data);
             } else if (chat.chatters.get(data.name)) {
               socket.emit('callback', 'join chat', {
                 accepted: false,
@@ -309,18 +325,21 @@ var ChatApp = function () {
               });
             } else if (chat.chat_pass && !data.chat_pass) {
               debug('pass requested w/o password!');
+              var msg = new chat.Message({
+                text: data.name + ' attempted to join without password',
+                type: 'danger'
+              });
+              self.io.sockets.to(chatName).emit('alert message', msg);
+              self.io.sockets.to(chatName).emit('missing pw try', data);
               socket.emit('callback', 'join chat', {
                 accepted: false,
                 error: 'This chat require a password to connect to it'
               });
             } else {
               // debug('chat: %O', chat);
-              // (async() => {
-              //   await _sodium.ready;
-              //   const sodium = _sodium;
               if (chat.chat_pass) {
-                debug('pass requested');
-                debug('pass request data: %O', data);
+                debug('password requested');
+                // debug('pass request data: %O', data);
                 var hash = sodium.to_string(sodium.from_base64(chat.chat_pass));
                 console.log('hash:', hash);
                 var pw = sodium.to_string(sodium.from_base64(data.chat_pass));
@@ -332,6 +351,12 @@ var ChatApp = function () {
                 } else if (sodium.from_string(hash).length === sodium.from_string(pw).length && sodium.compare(sodium.from_string(hash), sodium.from_string(pw)) === 0) {
                   console.log('Password OK!');
                 } else {
+                  var amsg = new chat.Message({
+                    text: data.name + ' attempted to join with a wrong password',
+                    type: 'danger'
+                  });
+                  self.io.sockets.to(chatName).emit('alert message', amsg);
+                  self.io.sockets.to(chatName).emit('wrong pw try', data);
                   console.log('Wrong password!');
                   socket.emit('callback', 'join chat', {
                     accepted: false,
@@ -457,17 +482,20 @@ var ChatApp = function () {
   self.initializeServer = function () {
     self.createRoutes();
     self.app = express();
-    var svrOptions = {
-      key: fs.readFileSync('keys/serverkey.pem'),
-      cert: fs.readFileSync('keys/servercert.pem'),
-      ca: fs.readFileSync('keys/cacert.pem')
-    };
+    // var svrOptions = {
+    //   key: fs.readFileSync('keys/serverkey.pem'),
+    //   cert: fs.readFileSync('keys/servercert.pem'),
+    //   ca: fs.readFileSync('keys/cacert.pem')
+    // };
     // keys_dir = 'keys/';
-    self.server = require('https').createServer(svrOptions, self.app);
-    self.serverhttp = require('http').createServer(self.app);
+    // self.server = require('https').createServer(svrOptions, self.app);
+    // self.serverhttp = require('http').createServer(self.app);
+    self.server = require('http').createServer(self.app);
 
-    self.app.use(function (req, res, next) {
-      if (req.secure) {
+    // eslint-disable-next-line no-unused-vars
+    /*self.app.use(function (req, res, next) {
+      debug('req.headers %O',req.headers);
+       if (req.secure) {
         next();
       } else {
         // debug(req.headers.host);
@@ -476,7 +504,7 @@ var ChatApp = function () {
         debug('requested: http://%s -> redirected to: https://%s:%s', req.headers.host, host, self.port);
         res.redirect('https://' + host + ':' + self.port);
       }
-    });
+    });*/
 
     self.io = require('socket.io').listen(self.server);
     self.chats = {};
@@ -512,13 +540,13 @@ var ChatApp = function () {
     self.server.listen(self.port, self.ipaddress, function () {
       debug('%s: Node server https started on %s:%d ...',
         Date(Date.now()), self.ipaddress, self.port);
+
     });
-    self.serverhttp.listen(self.httpport, self.ipaddress, function () {
+    /* self.serverhttp.listen(self.httpport, self.ipaddress, function () {
       debug('%s: Node server http started on %s:%d ...',
         Date(Date.now()), self.ipaddress, self.httpport);
-    });
+    }); */
   };
-
 };
 
 var zapp = new ChatApp();

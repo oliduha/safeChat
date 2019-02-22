@@ -168,6 +168,9 @@ a img {
 		.sender {
       overflow: hidden;
       display: block;
+      .danger {
+        display: inline;
+      }
 			small {
 				opacity: 0.75;
 				&:before {
@@ -181,7 +184,11 @@ a img {
 				@media screen and (max-width: $narrow) {
 					float: right;
 					//display: inline;
-				}
+        }
+        .danger {
+          text-align: center;
+          float: none;
+        }
 			}
 		}
 		.message-text {
@@ -189,7 +196,10 @@ a img {
 			margin-left: 0px;
 			@media screen and (max-width: $narrow) {
 				text-align: right;
-			}
+      }
+      .danger {
+        text-align: center;
+      }
 			input {
 				margin: 3px 0;
 				width:100%;
@@ -273,6 +283,17 @@ a img {
 }
 .color-5 {
 	color: rgb(127, 74, 0) !important;
+}
+.color-null {
+  opacity: .75;
+}
+.danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  border-radius: .25rem;
+  padding-right: 5px !important;
+  text-align: center !important;
 }
 .modal {
   //position: relative !important;

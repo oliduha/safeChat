@@ -82,6 +82,7 @@ function Chat($scope) {
     self.encrypted = data.encrypted || false;
     // undefined sender indicates system message
     self.sender = data.sender;
+    self.type = data.type;
     self.time = (data.time ? new Date(data.time) : new Date());
     $scope.messages.push(self);
     if (!$scope.server) {
@@ -106,10 +107,11 @@ function Chat($scope) {
     return hours + ':' + mins;
   };
 
-  $scope.newMessage = function (text, encrypted, sender, time) {
+  $scope.newMessage = function (text, encrypted, type, sender, time) {
     new $scope.Message({
       text: text,
       encrypted: encrypted,
+      type: type,
       sender: sender,
       time: time
     });
@@ -117,8 +119,10 @@ function Chat($scope) {
 
   $scope.systemMessage = function (text, io) {
     if ($scope.server) {
+      console.log('emitting sys message from server: ' + text);
       new $scope.Message({
-        text: text
+        text: text,
+        type: 'system'
       });
       io.sockets.to($scope.chat_name).emit('new message', {
         text: text
@@ -126,10 +130,10 @@ function Chat($scope) {
     } else {
       console.log('emitting sys message from client: ' + text);
       socket.emit('new message', {
-        text: text
+        text: text,
+        type: 'system'
       });
     }
-    console.log('emitting sys message from server: ' + text);
   };
 
   $scope.clearMessages = function () {
@@ -217,6 +221,16 @@ function Chat($scope) {
       }
       $scope.$apply();
       // Scroll to the bottom jsut for prettyness
+      $scope.scrollDown();
+    });
+
+    socket.on('alert message', function (data) {
+      console.log('received alert message:', data.text);
+      new $scope.Message ({
+        text: data.text,
+        type: 'danger'
+      });
+      $scope.$apply();
     });
 
     $scope.sendMessage = function () {
@@ -230,6 +244,7 @@ function Chat($scope) {
         message = new $scope.Message({
           text: enc_text,
           encrypted: true,
+          type: 'user',
           sender: $scope.my_username
         });
         $scope.message_text = '';
@@ -243,6 +258,7 @@ function Chat($scope) {
         console.log('Skip encoding:', typeof $scope.message_text, '->' + $scope.message_text + '<-');
         message = new $scope.Message({
           text: $scope.message_text,
+          type: 'init',
           sender: $scope.my_username
         });
         console.log('Emiting new message:', typeof message, message);
@@ -452,12 +468,22 @@ function Chat($scope) {
       console.log('count cnx:', nbcnx);
       $scope.$apply();
     });
-
     socket.on('count totcnx', function (totcnx) {
       $scope.totCnx = totcnx;
       console.log('total cnx:', totcnx);
       $scope.$apply();
     });
+
+    socket.on('locked try', function (data) {
+      console.log('locked try', data);
+    });
+    socket.on('missing pw try', function (data) {
+      console.log('missing pw try', data);
+    });
+    socket.on('wrong pw try', function (data) {
+      console.log('wrong pw try', data);
+    });
+
     /* $scope.decrypt = function (text) {
       if (text.indexOf('ENCRYPTED:') === 0) {
         text = GibberishAES.dec(text.substring(11), $scope.key);
