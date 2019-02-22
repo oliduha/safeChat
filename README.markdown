@@ -2,6 +2,9 @@ Project largely based on Tim's ChatSafe so following is his readme...
 
 I've simply adapted it to work with lastest vesions of the libs.
 
+Update 02/22/2019: replaced gibberish by libsodium, added an optional password for a chat, alert messages...
+Deploying on netlify...
+
 oliduha
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/a775a210-9417-460a-9edb-948ec1db36a7/deploy-status)](https://app.netlify.com/sites/safechat/deploys)
