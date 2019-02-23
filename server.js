@@ -19,7 +19,7 @@ var ChatApp = function () {
   /* self.setupVariables = function () {
     //  Set the environment variables we need.
     self.ipaddress = process.env.OPENSHIFT_INTERNAL_IP || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
-    // self.port = process.env.OPENSHIFT_INTERNAL_PORT || process.env.OPENSHIFT_NODEJS_IP || 8043;
+    // self.port = process.env.OPENSHIFT_INTERNAL_PORT || 8043;
     // self.httpport = 8080;
     self.port = 8080;
 
@@ -522,6 +522,7 @@ var ChatApp = function () {
    *  Initializes the application.
    */
   self.initialize = function () {
+    self.port = serverConfigurations.serverPort;
     // self.setupVariables();
     self.static_files = self.dirFiles('./static/');
     // self.image_files = self.dirFiles('./images/');
@@ -538,13 +539,13 @@ var ChatApp = function () {
    */
   self.start = function () {
     //  Start the app on the specific interface (and port).
-    /* self.server.listen(self.port, self.ipaddress, function () {
-      debug('%s: Node server https started on %s:%d ...',
-        Date(Date.now()), self.ipaddress, self.port);
+    // self.server.listen(self.port, self.ipaddress, function () {
+    //   debug('%s: Node server https started on %s:%d ...',
+    //     Date(Date.now()), self.ipaddress, self.port);
 
-    }); */
-    self.server.listen(serverConfigurations.serverPort, () => {
-      let serverStatus = `Server listening on localhost:${serverConfigurations.serverPort}.`;
+    // });
+    self.server.listen(self.port, () => {
+      var serverStatus = `Server listening on localhost:${self.port}.`;
       console.log(serverStatus);
     });
 

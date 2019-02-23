@@ -157,9 +157,11 @@ function Chat($scope) {
     document.title = $scope.chat_name + ' | ' + document.title;
     // console.log('self.port', self.port);
     // console.log('https://' + window.location.hostname + ':' + (self.port || 8043));
+    // socket = io.connect('https://' + window.location.hostname + ':' + (self.port || 8043), {
     socket = io.connect('https://' + window.location.hostname + ':' + (self.port || 8043), {
       secure: true
     });
+    console.log('socket.io port:', self.port || 43);
 
     socket.callback = {};
 
