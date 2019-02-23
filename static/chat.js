@@ -158,10 +158,10 @@ function Chat($scope) {
     // console.log('self.port', self.port);
     // console.log('https://' + window.location.hostname + ':' + (self.port || 8043));
     // socket = io.connect('https://' + window.location.hostname + ':' + (self.port || 8043), {
-    socket = io.connect('https://' + window.location.hostname + ':' + (self.port || 8043), {
+    socket = io.connect('http://' + window.location.hostname + ':' + (self.port || 8080), {
       secure: true
     });
-    console.log('socket.io port:', self.port || 43);
+    console.log('socket.io port:', self.port || 8080);
 
     socket.callback = {};
 
@@ -301,7 +301,7 @@ function Chat($scope) {
           $scope.username_error = undefined;
         } else { // New chatter connection
           // Take pw from the chat_pass input field
-          var hash;
+          // var hash;
           pw = $('input#chat_pass').val().trim().substr(0, 32) || '';
           if (pw && pw !== '') {
             // console.log('pw:',typeof pw, pw.length, pw);
@@ -316,13 +316,8 @@ function Chat($scope) {
           // Take pw from sessionStorage if exists
           if ($scope.storage.getItem('chatpass') !== null) {
             pw = $scope.storage.getItem('chatpass');
-            if (sodium.crypto_pwhash_str_verify(hash, sodium.to_string(sodium.from_base64(pw)))) {
-              console.log('Test Password OK!');
-            } else {
-              console.log('Test Password FAILED!');
-            }
           }
-          console.log('setUsername chat_pass:', typeof pw, pw.length, pw);
+          // console.log('setUsername chat_pass:', typeof pw, pw.length, pw);
           $scope.joinChat($scope.new_username, pw);
         }
       }

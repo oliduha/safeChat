@@ -1,6 +1,6 @@
 /* eslint-disable linebreak-style */
 
-let port = process.env.PORT || process.env.PORT_AZURE || process.env.PORT_AWS || 8043;
+let port = process.env.PORT || process.env.PORT_AZURE || process.env.PORT_AWS || 8080;
 
 // OpenShift ports
 if(process.env.OPENSHIFT_INTERNAL_PORT) {

@@ -3,8 +3,8 @@
   "version": "0.2.0",
   "description": "ChatSafe Encrypted Instant Messaging App",
   "scripts": {
-    "start": "node server",
-    "watch": "set DEBUG=safeChat:*,-engine:* & nodemon server"
+    "start": "node index",
+    "watch": "set DEBUG=safeChat:*,-engine:* & nodemon index"
   },
   "keywords": [
     "Node.js",
@@ -40,5 +40,5 @@
   },
   "bundleDependencies": [],
   "private": true,
-  "main": "server.js"
+  "main": "index.js"
 }
