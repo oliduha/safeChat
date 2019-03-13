@@ -492,8 +492,7 @@ var ChatApp = function () {
     // self.server = require('https').createServer(svrOptions, self.app);
     // self.serverhttp = require('http').createServer(self.app);
 
-    //self.server = require('http').createServer(self.app);
-    //self.app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
+    self.server = require('http').createServer(self.app);
 
     // eslint-disable-next-line no-unused-vars
     /*self.app.use(function (req, res, next) {
@@ -546,8 +545,7 @@ var ChatApp = function () {
     //     Date(Date.now()), self.ipaddress, self.port);
 
     // });
-    //self.server.listen(self.port, () => {
-    self.app.listen(self.port, () => {
+    self.server.listen(self.port, () => {
       var serverStatus = `Server listening on port:${self.port}.`;
       console.log(serverStatus);
     });
