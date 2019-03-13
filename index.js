@@ -491,7 +491,6 @@ var ChatApp = function () {
     // keys_dir = 'keys/';
     // self.server = require('https').createServer(svrOptions, self.app);
     // self.serverhttp = require('http').createServer(self.app);
-
     self.server = require('http').createServer(self.app);
 
     // eslint-disable-next-line no-unused-vars
@@ -508,7 +507,7 @@ var ChatApp = function () {
       }
     });*/
 
-    self.io = require('socket.io')(self.app);
+    self.io = require('socket.io').listen(self.server);
     self.chats = {};
     // self.chats.DaveChat = self.createChat('DaveChat');
     self.listenForConnections();
@@ -546,7 +545,7 @@ var ChatApp = function () {
 
     // });
     self.server.listen(self.port, () => {
-      var serverStatus = `Server listening on port:${self.port}.`;
+      var serverStatus = `Server listening on localhost:${self.port}.`;
       console.log(serverStatus);
     });
 
