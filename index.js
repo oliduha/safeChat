@@ -508,6 +508,7 @@ var ChatApp = function () {
     });
 
     self.io = require('socket.io').listen(self.server);
+    debug('socket.io self.server: %O', self.server);
     self.chats = {};
     // self.chats.DaveChat = self.createChat('DaveChat');
     self.listenForConnections();
