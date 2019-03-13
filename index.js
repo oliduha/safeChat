@@ -494,9 +494,9 @@ var ChatApp = function () {
     self.server = require('http').createServer(self.app);
 
     // eslint-disable-next-line no-unused-vars
-    self.app.use(function (req, res, next) {
-      debug('req.headers: %O',req.headers);
-      if (req.secure) {
+    /*self.app.use(function (req, res, next) {
+      debug('req.headers %O',req.headers);
+       if (req.secure) {
         next();
       } else {
         // debug(req.headers.host);
@@ -505,10 +505,9 @@ var ChatApp = function () {
         debug('requested: http://%s -> redirected to: https://%s:%s', req.headers.host, host, self.port);
         res.redirect('https://' + host + ':' + self.port);
       }
-    });
+    });*/
 
-    self.io = require('socket.io').listen(self.server);
-    debug('socket.io self.server: %O', self.server);
+    self.io = require('socket.io').listen(self.app);
     self.chats = {};
     // self.chats.DaveChat = self.createChat('DaveChat');
     self.listenForConnections();
