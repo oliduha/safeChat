@@ -158,10 +158,10 @@ function Chat($scope) {
     // console.log('self.port', self.port);
     // console.log('https://' + window.location.hostname + ':' + (self.port || 8043));
     // socket = io.connect('https://' + window.location.hostname + ':' + (self.port || 8043), {
-    socket = io.connect('https://' + window.location.hostname + ':' + (self.port || 8080), {
+    socket = io.connect('https://' + window.location.hostname/* + ':' + (self.port || 8080)*/, {
       secure: true
     });
-    console.log('socket.io port:', self.port || 8080);
+    //console.log('self.port:', self.port);
 
     socket.callback = {};
 
@@ -257,7 +257,7 @@ function Chat($scope) {
         message.encrypted = false;
         // console.log('Message:', typeof message, message);
       } else {
-        console.log('Skip encoding:', typeof $scope.message_text, '->' + $scope.message_text + '<-');
+        console.log('Skip encoding (no message):', typeof $scope.message_text, '->' + $scope.message_text + '<-');
         message = new $scope.Message({
           text: $scope.message_text,
           type: 'init',
