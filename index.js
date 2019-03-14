@@ -509,11 +509,6 @@ var ChatApp = function () {
 
     self.io = require('socket.io')(self.port);
 
-    self.io.configure(function () {
-      self.io.set('transports', ['xhr-polling']);
-      self.io.set('polling duration', 10);
-      self.io.set('log level', 1);
-    });
     self.chats = {};
     // self.chats.DaveChat = self.createChat('DaveChat');
     self.listenForConnections();
