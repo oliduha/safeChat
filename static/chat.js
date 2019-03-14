@@ -158,7 +158,7 @@ function Chat($scope) {
     // console.log('self.port', self.port);
     // console.log('https://' + window.location.hostname + ':' + (self.port || 8043));
     // socket = io.connect('https://' + window.location.hostname + ':' + (self.port || 8043), {
-    socket = io.connect('http://' + window.location.hostname + ':' + (self.port || 8080), {
+    socket = io.connect('https://' + window.location.hostname + ':' + (self.port || 8080), {
       secure: true
     });
     console.log('socket.io port:', self.port || 8080);
