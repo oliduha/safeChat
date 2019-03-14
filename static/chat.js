@@ -238,7 +238,7 @@ function Chat($scope) {
     $scope.sendMessage = function () {
       var message;
       console.log('Enc & send?', typeof $scope.message_text, '->' + $scope.message_text + '<-');
-      if ($scope.message_text !== ('' || ' ' || null) && typeof $scope.message_text !== 'undefined') {
+      if ($scope.message_text !== ('') && typeof $scope.message_text !== 'undefined') {
         // console.log('Yes! Encoding & sending:', typeof $scope.message_text, '->' + $scope.message_text + '<-');
         var original_text = $scope.message_text;
         // var enc_text = 'ENCRYPTED: ' + GibberishAES.enc(original_text, $scope.key);
