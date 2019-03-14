@@ -572,6 +572,7 @@ function Chat($scope) {
 
   if (!$scope.server) {
     var socket = $scope.clientConnection();
+    console.log('$scope.clientConnection(): %O', $scope.clientConnection());
   } else {
     test();
   }
