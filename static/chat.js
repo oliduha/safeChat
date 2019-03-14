@@ -237,7 +237,7 @@ function Chat($scope) {
 
     $scope.sendMessage = function () {
       var message;
-      // console.log('Enc & send?', typeof $scope.message_text, '->' + $scope.message_text + '<-');
+      console.log('Enc & send?', typeof $scope.message_text, '->' + $scope.message_text + '<-');
       if ($scope.message_text !== ('' || ' ') || typeof $scope.message_text !== 'undefined') {
         // console.log('Yes! Encoding & sending:', typeof $scope.message_text, '->' + $scope.message_text + '<-');
         var original_text = $scope.message_text;
