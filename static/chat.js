@@ -257,14 +257,14 @@ function Chat($scope) {
         message.encrypted = false;
         // console.log('Message:', typeof message, message);
       } else {
-        console.log('Skip encoding (no message):', typeof $scope.message_text, '->' + $scope.message_text + '<-');
-        message = new $scope.Message({
+        console.log('Skip emmiting (blank message):', typeof $scope.message_text, '->' + $scope.message_text + '<-');
+        /*message = new $scope.Message({
           text: $scope.message_text,
           type: 'init',
           sender: $scope.my_username
         });
         console.log('Emiting new message:', typeof message, message);
-        socket.emit('new message', message);
+        socket.emit('new message', message);*/
       }
 
       // key = sodium.to_hex(sodium.crypto_generichash(16, sodium.from_string($scope.chat_name))); // works !
