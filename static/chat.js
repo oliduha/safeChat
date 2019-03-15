@@ -158,9 +158,15 @@ function Chat($scope) {
     // console.log('self.port', self.port);
     // console.log('https://' + window.location.hostname + ':' + (self.port || 8043));
     // socket = io.connect('https://' + window.location.hostname + ':' + (self.port || 8043), {
-    socket = io.connect('https://' + window.location.hostname/* + ':' + (self.port || 8080)*/, {
-      secure: true
-    });
+    if (window.location.hostname === 'localhost') {
+      socket = io.connect('http://' + window.location.hostname/* + ':' + (self.port || 8080)*/, {
+        secure: true
+      });
+    } else {
+      socket = io.connect('https://' + window.location.hostname /* + ':' + (self.port || 8080)*/ , {
+        secure: true
+      });
+    }
     //console.log('self.port:', self.port);
 
     socket.callback = {};
@@ -250,7 +256,7 @@ function Chat($scope) {
           sender: $scope.my_username
         });
         $scope.message_text = '';
-        console.log('Emiting encrypted message:', typeof message, message);
+        console.log('Emiting encrypted message:', message);
         socket.emit('encrypted message', message);
         // console.log('Emited encrypted message:', typeof message, message);
         message.text = original_text;
@@ -277,7 +283,7 @@ function Chat($scope) {
       console.log('sodium dec:', testSodium); */
     };
 
-    // Send message on enter key
+    // Send message on enter key press
     $('#message_textarea').keypress(function (event) {
       if (event.which === 13) {
         event.preventDefault();
@@ -504,7 +510,7 @@ function Chat($scope) {
       }
       catch(error) {
         console.error(error.message);
-        window.alert(error.message);
+        // window.alert(error.message);
       }
     };
 
@@ -530,7 +536,7 @@ function Chat($scope) {
       }
       catch(error) {
         console.error(error.message);
-        window.alert(error.message);
+        // window.alert(error.message);
       }
     };
 
