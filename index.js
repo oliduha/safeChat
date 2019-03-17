@@ -501,6 +501,12 @@ var ChatApp = function () {
         nbchatsc++;
         delete self.chats[chat];
       }
+      if (self.chats[chat] === undefined) {
+        debug('removing a deleted chat');
+        // chat = undefined;
+        nbchatsc++;
+        delete self.chats[chat];
+      }
     }
     debug('%s/%s chat(s) cleaned.', nbchatsc, nbchats);
   };
