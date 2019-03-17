@@ -5,13 +5,10 @@
   <meta charset="UTF-8">
   <title>SafeChat</title>
   <meta name="viewport" content="width=350, user-scalable=no" />
-  <!--<link href="bootstrap-combined.min.css" rel="stylesheet">-->
-  <!--<link href="//hnetdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" />-->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="sodium.js" async></script>
-  <script src="jquery-3.3.1.min.js"></script>
-  <!-- <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-    crossorigin="anonymous"></script> -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
   crossorigin="anonymous"></script>
   <style>
@@ -19,7 +16,7 @@
       overflow-y: scroll;
     }
     body {
-      min-width: 300px;
+      min-width: 400px;
       padding-bottom: 20px;
     }
     .container {
@@ -29,6 +26,13 @@
       width: 342px;
       height: 251px;
       margin-bottom: 30px;
+    }
+    #logo-text-overlay {
+      margin: -155px 0 120px;
+      font-style: italic;
+    }
+    .lto-left {
+      margin: 0 11px 0 -10px;
     }
     .hero-unit {
       padding-bottom: 45px;
@@ -52,8 +56,8 @@
         height: auto;
       }
       .hero-unit {
-        padding-left: 30px;
-        padding-right: 30px;
+        padding-left: 10px;
+        padding-right: 10px;
       }
     }
     .input-append fieldset input {
@@ -87,6 +91,22 @@
       display: none;
       min-height: 615px;
     }
+    #btn-join {
+      width: 100px;
+    }
+    .info-required {
+      color: red;
+      font-style: italic;
+      font-size: 0.9em;
+      text-align: center;
+    }
+    .info-required::before {
+      content: "* ";
+      display: inline;
+    }
+    button#btn_gen_name, button#btn_gen_name {
+      width: 78px;
+    }
 	</style>
   <script src="index.js"></script>
 </head>
@@ -95,32 +115,37 @@
   <div class="container">
     <div class="hero-unit">
       <!--<h1>ChatSafe</h1>
-				<p>Chat with anyone, anywhere, securely</p>
 				<br />-->
       <img src="safechat_medium.png" class="logo" alt="logo SafeChat" />
+			<p id="logo-text-overlay" class="text-warning">
+          <span class="lto-left">Chat with</span> anyone, anywhere, securely
+      </p>
       <div class="alert alert-danger">
         Your Browser does not support ChatSafe
       </div>
-      <h4>Simple encrypted instant messaging</h4><br />
+      <h5><em>Simple encrypted instant messaging</em></h5><br />
       <form class="input-append" id="new_chat_form">
         <fieldset>
           <label for="chat_name" class="required">Chat title:</label> <br />
           <input type="text" class="input-xlarge" placeholder="Pick a title for your chat" id="chat_name" name="chat_name" required='required' />
-          <button id="btn_gen_name" type="button" class="btn btn-outline-primary btn-sm">Gen</button><br /><br />
+          <button id="btn_gen_name" type="button" class="btn btn-warning btn-sm">Generate</button><br />
           <label for="chat_pass">Chat password?</label><br />
           <input type="text" class="input-xlarge" placeholder="Optionaly pick a password for it" id="chat_pass" name="chat_pass" />
-          <button id="btn_gen_pass" type="button" class="btn btn-outline-primary btn-sm">Gen</button>
-          <button id="btn_pass_x" type="button" class="btn btn-outline-danger btn-sm">&times;</button><br /><br />
+          <button id="btn_gen_pass" type="button" class="btn btn-warning btn-sm">Gen.</button>
+          <button id="btn_pass_x" type="button" class="btn btn-danger btn-sm">&times;</button><br /><br />
+          <label for="chatter_name" class="required">Pseudo:</label><br />
+          <input type="text" class="input-xlarge" placeholder="Pick a pseudo for this chat" id="chatter_name" name="chatter_name"
+            required='required' />
+          <button id="btn_gen_user_name" type="button" class="btn btn-warning btn-sm">Generate</button><br /><br />
+          <div class="info-required">: required field</div><br />
         </fieldset>
-        <input type="submit" class="btn btn-success" value="Create Chat" />
+        <button type="submit" class="btn btn-primary">
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display:none"></span>
+          <span>Create Chat</span>
+        </button>
       </form>
     </div>
     <hr class="my-2">
-    <!-- <div class="info-links">
-      <a href="#how">How?</a>
-      <a href="#why">Why?</a>
-      <a href="#who">Who?</a>
-    </div> -->
     <ul class="nav nav-pills nav-justified mb-3" id="pills-tab" role="tablist">
       <li class="nav-item">
         <a class="nav-link nav-link-dark" id="pills-how-tab" data-toggle="pill" href="#pills-how" role="tab" aria-controls="pills-how" aria-selected="false">How?</a>
@@ -213,5 +238,10 @@
       </div>
     </div>
   </div>
+  <script type="javascript">
+    $('spinner-border').on('submit', function () {
+    $('button[type="submit"] .spinner-border').show();
+  });
+  </script>
 </body>
 </html>

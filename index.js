@@ -132,17 +132,24 @@ var ChatApp = function () {
       res.setHeader('Content-Type', 'application/json');
       var slice_point = req.url.lastIndexOf('/new/');
       var slice_point_p = req.url.indexOf('&');
+      var chat_url = '';
       // debug('req: %O', req);
-      // debug('**req url**:', req.url);
+      debug('**req url**:', req.url);
       var pass = '';
       if (slice_point_p > 0) {
         pass = req.url.slice(slice_point_p + 1);
+        chat_url = req.url.slice(slice_point + 5, slice_point_p);
+      } else {
+        chat_url = req.url.slice(slice_point + 5);
       }
+      // var chat_url = req.url.slice(slice_point + 5, slice_point_p);
       // debug('*chat pass:', pass);
-      var chat_url = req.url.slice(slice_point + 5, slice_point_p);
-      // debug('*chat url:', chat_url);
+      debug('*chat url:', chat_url);
+      debug('*chat pass:', pass);
       if (slice_point >= 0) {
-        if (self.chats[chat_url]) {
+        if (self.chats[chat_url]/*  && (self.chats[chat_url].chatters.length > 0 || (new Date() - self.chats[chat_url].birth) < 120000) */) {
+          debug('chatters.length: %s', self.chats[chat_url].chatters.length);
+          debug('chat.age: %ss', (new Date() - self.chats[chat_url].birth) / 1000);
           res.send({
             error: 'That chat name is already in use'
           });
@@ -476,6 +483,19 @@ var ChatApp = function () {
     });
   };
 
+  self.cleanChats = function () {
+    var initLength = self.chats.length;
+    debug('cleaning chats... (%s)', initLength || 0);
+    debug('self.chats: ', self.chats);
+    for (var i = 0; i < self.chats.length; ++i) {
+      if (self.chats[i].chatters.length === 0 && (new Date() - self.chats[i].birth) > 1000 * 60 * 60 * 6) {
+        debug('removing a %sh old chat', (new Date() - self.chats[i].birth) / (1000*60*60));
+        self.chats.splice(i, 1);
+      }
+    }
+    debug('%s chat(s) cleaned.', (initLength - self.chats.length) || 0);
+  };
+
   /**
    *  Initialize the server (express) and create the routes and register
    *  the handlers.
@@ -520,7 +540,7 @@ var ChatApp = function () {
     }
   };
 
-  /**
+  /***************************************************************
    *  Initializes the application.
    */
   self.initialize = function () {
@@ -531,6 +551,9 @@ var ChatApp = function () {
     self.populateCache();
     self.setupTerminationHandlers();
     setInterval(self.refreshCache, 1000);
+    // clean unused chatnames
+    // setInterval(self.cleanChats, 1000*60*60*6);
+    setInterval(self.cleanChats, 1000*60); // 1 min for tests
 
     // Create the express server and routes.
     self.initializeServer();

@@ -20,6 +20,7 @@ $(document).ready(function () {
   $('.alert').hide();
   var storage = window.sessionStorage;
   storage.removeItem('chatpass');
+  storage.removeItem('chatuname');
   gen_name().then(
     result => $('#chat_name').val(result),
     error => function() {
@@ -46,6 +47,9 @@ $(document).ready(function () {
   $('#btn_pass_x').click(function() {
     $('#chat_pass').val('');
   });
+  $('#btn_gen_user_name').click(function() {
+    $('#chatter_name').val(unGen());
+  });
   $('#new_chat_form').submit(function (e) {
     var pw = '';
     e.preventDefault();
@@ -56,12 +60,14 @@ $(document).ready(function () {
       .split('&').join('_')
       .split('/').join('_');
     var spw = $('#chat_pass').val();
+    var u_name = $('#chatter_name').val();
+    storage.setItem('chatuname', u_name);
     // console.log('password value: (' + typeof spw +') ' + spw);
     if (spw && spw !== '') {
       pw = sodium.crypto_pwhash_str(
         spw,
-        sodium.crypto_pwhash_OPSLIMIT_INTERACTIVE,
-        sodium.crypto_pwhash_MEMLIMIT_INTERACTIVE
+        sodium.crypto_pwhash_OPSLIMIT_MIN,
+        sodium.crypto_pwhash_MEMLIMIT_MIN
       );
       // console.log(sodium.crypto_pwhash_str_verify(sodium.from_base64(pw), spw));
       if (sodium.crypto_pwhash_str_verify(pw, spw)) {
@@ -158,7 +164,6 @@ var pGen = function() {
     return chars;
   };
 
-
   // Credit to @Christoph: http://stackoverflow.com/a/962890/464744
   String.prototype.shuffle = function() {
     var array = this.split('');
@@ -182,4 +187,17 @@ var pGen = function() {
   password += all.pick(16, 16);
   password = password.shuffle();
   return password;
+};
+
+var unGen = function () {
+  var animals = ['dog', 'cat', 'bird', 'butterfly', 'ant', 'beetle', 'tiger', 'lion', 'mouse', 'elephant',
+    'panda', 'bear', 'turtle', 'spider', 'bat', 'wolf', 'cow', 'chicken', 'sheep', 'duck'];
+  var qualifs = ['dark', 'angry', 'happy', 'sad', 'wonderful', 'awsome', 'degenerated', 'zombified', 'slow', 'speed',
+    'migthy', 'magic', 'tender', 'running', 'speedy', 'little', 'big', 'stupid', 'bad', 'nice'];
+
+  var i = Math.floor(Math.random() * 20);
+  var res = qualifs[i];
+  i = Math.floor(Math.random() * 20);
+  res += ' ' + animals[i];
+  return res;
 };

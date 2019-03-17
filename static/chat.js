@@ -9,15 +9,16 @@ function Chat($scope) {
     $scope.page_url = location.href;
     $scope.storage = window.sessionStorage;
   }
+  $scope.chat_name = $scope.chat_name || $scope.chat_url.split('_').join(' ') || 'Chat';
   console.log('NewChat name:', $scope.chat_name);
   console.log('NewChat key:', $scope.key || 'no key here!');
   console.log('NewChat pass:', $scope.chat_pass || 'no pass here!');
-  $scope.chat_name = $scope.chat_name || $scope.chat_url.split('_').join(' ') || 'Chat';
   // console.log($scope.chat_name, $scope.chat_pass);
   // $scope.chat_pass = $scope.chat_pass || false;
   $scope.my_username = undefined;
   $scope.locked = false;
   $scope.chatters = [];
+  $scope.birth = new Date();
 
   $scope.chatters.get = function (name) {
     for (var i = 0; i < this.length; i++) {
@@ -305,7 +306,8 @@ function Chat($scope) {
           $scope.chatters.get($scope.my_username).updateName($scope.new_username);
           $('#username_modal').modal('hide');
           $scope.username_error = undefined;
-        } else { // New chatter connection
+        // New chatter connection
+        } else {
           // Take pw from the chat_pass input field
           // var hash;
           pw = $('input#chat_pass').val().trim().substr(0, 32) || '';
@@ -416,9 +418,18 @@ function Chat($scope) {
 
     // Give focus to the input on modal show
     $('#username_modal').on('shown.bs.modal', function () {
+      var ispp = false;
       $('#user_name').trigger('focus');
-      if($scope.storage.getItem('chatpass') !== null) {
+      if ($scope.storage.getItem('chatpass') !== null) {
+        ispp = true;
         $('#chat_pass').hide();
+      }
+      if($scope.storage.getItem('chatuname') !== null) {
+        $('#user_name').val($scope.storage.getItem('chatuname'));
+        if (ispp) {
+          $scope.setUsername();
+          $scope.$apply();
+        }
       }
     });
 
