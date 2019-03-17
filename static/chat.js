@@ -328,6 +328,9 @@ function Chat($scope) {
             pw = $scope.storage.getItem('chatpass');
           }
           // console.log('setUsername chat_pass:', typeof pw, pw.length, pw);
+          if (!$scope.new_username) {
+            $scope.new_username = $('#username_modal .userinput').val();
+          }
           $scope.joinChat($scope.new_username, pw);
         }
       }
