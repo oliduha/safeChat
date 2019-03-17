@@ -484,16 +484,25 @@ var ChatApp = function () {
   };
 
   self.cleanChats = function () {
-    var initLength = self.chats.length;
-    debug('cleaning chats... (%s)', initLength || 0);
-    debug('self.chats: ', self.chats);
-    for (var i = 0; i < self.chats.length; ++i) {
-      if (self.chats[i].chatters.length === 0 && (new Date() - self.chats[i].birth) > 1000 * 60 * 60 * 6) {
-        debug('removing a %sh old chat', (new Date() - self.chats[i].birth) / (1000*60*60));
-        self.chats.splice(i, 1);
+    var nbchats = 0, nbchatsc = 0;
+    debug('cleaning chats...');
+    // debug('self.chats: ', typeof self.chats, self.chats);
+    for (var chat in self.chats) {
+      nbchats++;
+      // debug('chat: (%s) %O', typeof self.chats[chat], self.chats[chat]);
+      /* for (var prop in self.chats[chat]) {
+        if (self.chats[chat].hasOwnProperty(prop)) {
+          debug('prop: ', self.chats[chat][prop]);
+        }
+      } */
+      if (self.chats[chat].chatters.length === 0 && (new Date() - self.chats[chat].birth) > 1000*60*60) {
+        debug('removing a %sm old chat', (new Date() - self.chats[chat].birth) / (1000*60));
+        // chat = undefined;
+        nbchatsc++;
+        delete self.chats[chat];
       }
     }
-    debug('%s chat(s) cleaned.', (initLength - self.chats.length) || 0);
+    debug('%s/%s chat(s) cleaned.', nbchatsc, nbchats);
   };
 
   /**
@@ -553,7 +562,7 @@ var ChatApp = function () {
     setInterval(self.refreshCache, 1000);
     // clean unused chatnames
     // setInterval(self.cleanChats, 1000*60*60*6);
-    setInterval(self.cleanChats, 1000*60); // 1 min for tests
+    setInterval(self.cleanChats, 1000*60*60); // clean every hour
 
     // Create the express server and routes.
     self.initializeServer();
