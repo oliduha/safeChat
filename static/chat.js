@@ -302,6 +302,8 @@ function Chat($scope) {
       if ($scope.new_username !== '') {
         var pw = '';
         // Update name of already existing chatter
+        console.log('$scope.new_username: ', $scope.new_username);
+        console.log('$scope.my_username: ', $scope.my_username);
         if ($scope.my_username) {
           $scope.chatters.get($scope.my_username).updateName($scope.new_username);
           $('#username_modal').modal('hide');
@@ -325,7 +327,6 @@ function Chat($scope) {
           if ($scope.storage.getItem('chatpass') !== null) {
             pw = $scope.storage.getItem('chatpass');
           }
-          console.log('$scope.new_username: ', $scope.new_username);
           // console.log('setUsername chat_pass:', typeof pw, pw.length, pw);
           $scope.joinChat($scope.new_username, pw);
         }
