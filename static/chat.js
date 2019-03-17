@@ -325,6 +325,7 @@ function Chat($scope) {
           if ($scope.storage.getItem('chatpass') !== null) {
             pw = $scope.storage.getItem('chatpass');
           }
+          console.log('$scope.new_username: ', $scope.new_username);
           // console.log('setUsername chat_pass:', typeof pw, pw.length, pw);
           $scope.joinChat($scope.new_username, pw);
         }
