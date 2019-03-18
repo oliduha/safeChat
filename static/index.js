@@ -51,8 +51,9 @@ $(document).ready(function () {
     $('#chatter_name').val(unGen());
   });
   $('#new_chat_form').submit(function (e) {
-    var pw = '';
     e.preventDefault();
+    $('button[type="submit"] .spinner-border').show();
+    var pw = '';
     var chat_name = $('#chat_name').val()
       .split(' ').join('_')
       .split('.').join('_')

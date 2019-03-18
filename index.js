@@ -414,11 +414,11 @@ var ChatApp = function () {
         debug('connections in %s: %d', chatName, clients.length);
         self.io.sockets.to(chatName).emit('count cnx', clients.length);
       });
-      self.io.of('/').clients(function (error, clients) {
-        debug('total connections: %d', clients.length);
-        self.io.sockets.to('/').in(chatName).emit('count totcnx', clients.length);
-      });
     }
+    self.io.of('/').clients(function (error, clients) {
+      debug('total connections: %d', clients.length);
+      self.io.sockets.to('/').in(chatName).emit('count totcnx', clients.length);
+    });
   };
 
   self.setupEvents = function (socket, chat) {
@@ -568,10 +568,12 @@ var ChatApp = function () {
     // self.image_files = self.dirFiles('./images/');
     self.populateCache();
     self.setupTerminationHandlers();
+    // refresh cache every second
     setInterval(self.refreshCache, 1000);
-    // clean unused chatnames
-    // setInterval(self.cleanChats, 1000*60*60*6);
-    setInterval(self.cleanChats, 1000*60*60); // clean every hour
+    // clean unused chatnames every hour
+    setInterval(self.cleanChats, 1000 * 60 * 60);
+    // trace connexions number every min
+    setInterval(self.cnxCount, 1000 * 60);
 
     // Create the express server and routes.
     self.initializeServer();
