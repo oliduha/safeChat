@@ -166,7 +166,7 @@ a img {
 	top: 100px;
 	padding-bottom: 80px;
   color: rgb(100,100,100);
-  .message.is_me strong small
+  //.message.is_me strong small
 	.message {
 		border-bottom: 1px solid $gray;
 		padding: 3px 0px;
@@ -181,7 +181,7 @@ a img {
 				opacity: 0.75;
 				&:before {
 					content: " ";
-					display: block;
+					display: inline;
         }
         &:after {
 					content: " ";

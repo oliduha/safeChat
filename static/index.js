@@ -191,14 +191,31 @@ var pGen = function() {
 };
 
 var unGen = function () {
-  var animals = ['dog', 'cat', 'bird', 'butterfly', 'ant', 'beetle', 'tiger', 'lion', 'mouse', 'elephant',
-    'panda', 'bear', 'turtle', 'spider', 'bat', 'wolf', 'cow', 'chicken', 'sheep', 'duck'];
-  var qualifs = ['dark', 'angry', 'happy', 'sad', 'wonderful', 'awsome', 'degenerated', 'zombi', 'slow', 'speed',
-    'migthy', 'magic', 'mad', 'running', 'speedy', 'little', 'big', 'stupid', 'bad', 'nice'];
+  var animals = [
+    'Dog', 'Cat', 'Bird', 'Butterfly', 'Ant',
+    'Rabbit', 'Ape', 'Panther', 'Mouse', 'Elephant',
+    'Fish', 'Bear', 'Turtle', 'Spider', 'Bat',
+    'Giraffe', 'Cow', 'Shark', 'Horse', 'Duck',
+    'Deer', 'Fox', 'Frog', 'Pig', 'Snake'
+  ];
+  var qualifs = [
+    'Dark', 'Angry', 'Happy', 'Sad', 'Wonderful',
+    'Awsome', 'Degenerated', 'Zombi', 'Slow', 'Flying',
+    'Migthy', 'Magic', 'Mad', 'Running', 'Speedy',
+    'Little', 'Big', 'Stupid', 'Bad', 'Nice'];
+  var colors = [
+    'Blue', 'Red', 'Yellow', 'Green', 'Purple',
+    'Pink', 'Marron', 'Black', 'Magenta', 'Cyan',
+    'Aquamarine', 'Orange', 'Indigo', 'Gray', 'Silver',
+    'Amethyst', 'Sienna', 'Brown', 'Tan', 'Navy',
+    'Teal', 'Lime', 'Chartreuse', 'Lavender', 'Gold'
+  ];
 
   var i = Math.floor(Math.random() * 20);
   var res = qualifs[i];
-  i = Math.floor(Math.random() * 20);
+  i = Math.floor(Math.random() * 25);
+  res += ' ' + colors[i];
+  i = Math.floor(Math.random() * 25);
   res += ' ' + animals[i];
   return res;
 };
