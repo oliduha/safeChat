@@ -89,20 +89,20 @@ var ChatApp = function () {
    *  Terminate server on receipt of the specified signal.
    *  @param {string} sig  Signal to terminate on.
    */
-  self.terminator = function (sig) {
+  /*  self.terminator = function (sig) {
     if (typeof sig === 'string') {
       debug('%s: Received %s - terminating sample app ...',
         Date(Date.now()), sig);
       process.exit(1);
     }
     debug('%s: Node server stopped!', Date(Date.now()));
-  };
+  }; */
 
 
   /**
    *  Setup termination handlers (for exit and a list of signals).
    */
-  self.setupTerminationHandlers = function () {
+  /* self.setupTerminationHandlers = function () {
     //  Process on exit and signals.
     process.on('exit', function () {
       self.terminator();
@@ -115,7 +115,7 @@ var ChatApp = function () {
         self.terminator(element);
       });
     });
-  };
+  }; */
 
   self.createRoutes = function () {
     self.routes = {};
@@ -567,7 +567,7 @@ var ChatApp = function () {
     self.static_files = self.dirFiles('./static/');
     // self.image_files = self.dirFiles('./images/');
     self.populateCache();
-    self.setupTerminationHandlers();
+    //self.setupTerminationHandlers();
     // refresh cache every second
     setInterval(self.refreshCache, 1000);
     // clean unused chatnames every hour

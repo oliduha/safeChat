@@ -36,7 +36,6 @@
             <input id="chat_pass" class="userinput chatpass" type="text" placeholder="Type the password (if required)" ng-disabled="join_loading" />
           </div>
           <div class="modal-footer">
-            <!--<i class="icon-loading" ng-show="join_loading"></i>-->
             <button id="btn-join" class="btn btn-outline-primary" ng-disabled="join_loading" ng-click="setUsername()">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" ng-show="join_loading"></span> Join</button>
           </div>
@@ -86,17 +85,21 @@
       <div class="messages-box" id="messages-box">
         <div class="message row-fluid" ng-hide="messages.length > 0">
           <div class="message-text">
-            Securely send this address to the people you want to chat with: <br /><br />
-            <input id="urlTxt" type="text" class="form-control form-control-lg" value="{{page_url}}" />
-            <button id="btnCopy" class="btn btn-primary btn-block" ng-click="copyUrl()"><img src="clippy.png" alt="Copy URL" title="Copy URL" /></button>
-            <p>I recommend creating a <a href="https://privnote.com" target="_blank">privnote</a> for every one you want to chat with.</p>
-
+            Securely send this address to anyone you want to chat with: <br />
+            <input id="url-txt" type="text" class="form-control form-control-lg" value="{{page_url}}" />
+            <button id="btn-copy" class="btn btn-primary btn-block" ng-click="copyUrl()">
+              <img src="clippy.png" alt="Copy URL to your clipboard" title="Copy URL" />
+            </button>
+          </div>
+          <div class="message-text">
+              I recommend creating a <a href="https://privnote.com" target="_blank">privnote</a> for every one you want to chat with.
           </div>
         </div>
         <div class="message row-fluid color-{{chatters.get(message.sender).id % 6}} {{chatters.get(message.sender).isMe()}} {{message.type}}"
           ng-repeat="message in messages | orderBy: 'time'">
           <strong class="sender span3 {{message.type}}">
-            <!--ng-hide="message.sender == undefined"--><small class="{{message.type}}">{{message.timeString()}}</small>{{message.sender}}</strong>
+            <small class="{{message.type}}">{{message.timeString()}}</small>{{message.sender}}
+          </strong>
           <div class="message-text span9 {{message.type}}">{{message.text}}</div>
         </div>
       </div>

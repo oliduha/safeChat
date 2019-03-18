@@ -100,7 +100,11 @@ a img {
 			margin-right: 3px;
 			margin-left: -10px;
 		}
-	}
+  }
+  #btn-copy {
+    height:32px;
+    filter: invert(1);
+  }
 	.compact-only {
 		width: auto;
 		float: right;

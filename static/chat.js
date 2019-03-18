@@ -574,12 +574,12 @@ function Chat($scope) {
 
     // Copy URL
     $scope.copyUrl = function() { // eslint-disable-line no-unused-vars
-      $('#urlTxt').select();
-      // console.log('Copy URL:', $('#urlTxt').val());
+      $('#url-txt').select();
+      // console.log('Copy URL:', $('#url-txt').val());
       if(document.execCommand('copy')) {
-        // console.log('Successfully copied URL:', $('#urlTxt').val());
+        // console.log('Successfully copied URL:', $('#url-txt').val());
       } else {
-        console.error('FAILED Coping URL:', $('#urlTxt').val());
+        console.error('FAILED Coping URL:', $('#url-txt').val());
       }
       return false;
     };
