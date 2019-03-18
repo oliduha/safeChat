@@ -198,6 +198,7 @@ var unGen = function () {
     'Giraffe', 'Cow', 'Shark', 'Horse', 'Duck',
     'Deer', 'Fox', 'Frog', 'Pig', 'Snake'
   ];
+  // eslint-disable-next-line no-unused-vars
   var qualifs = [
     'Dark', 'Angry', 'Happy', 'Sad', 'Wonderful',
     'Awsome', 'Degenerated', 'Zombi', 'Slow', 'Flying',
@@ -211,10 +212,10 @@ var unGen = function () {
     'Teal', 'Lime', 'Chartreuse', 'Lavender', 'Gold'
   ];
 
-  var i = Math.floor(Math.random() * 20);
-  var res = qualifs[i];
-  i = Math.floor(Math.random() * 25);
-  res += ' ' + colors[i];
+  /*var i = Math.floor(Math.random() * 20);
+  var res = qualifs[i];*/
+  var i = Math.floor(Math.random() * 25);
+  var res = colors[i];
   i = Math.floor(Math.random() * 25);
   res += ' ' + animals[i];
   return res;
