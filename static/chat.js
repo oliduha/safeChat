@@ -413,6 +413,7 @@ function Chat($scope) {
     };
 
     socket.on('bad request', function () {
+      window.alert('Bad request!\n\nThis is probably caused by a server restart...\n\nBy hitting OK, you\'ll be redirected to the home page.');
       $scope.chatters.destroy($scope.my_username);
       socket.disconnect();
       location.reload();
