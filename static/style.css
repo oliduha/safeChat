@@ -179,61 +179,66 @@ a img {
   padding-bottom: 80px;
   color: #646464;
 }
-.messages-box .message {
+.messages-box .message.is_me strong small .message {
   border-bottom: 1px solid #e6e6e6;
   padding: 3px 0px;
   margin: 1px 0px;
 }
-.messages-box .message .sender {
+.messages-box .message.is_me strong small .message .sender {
   overflow: hidden;
   display: block;
 }
-.messages-box .message .sender .danger {
+.messages-box .message.is_me strong small .message .sender .danger {
   display: inline;
 }
-.messages-box .message .sender small {
+.messages-box .message.is_me strong small .message .sender small {
   opacity: 0.75;
 }
-.messages-box .message .sender small:before {
+.messages-box .message.is_me strong small .message .sender small:before {
   content: " ";
   display: block;
 }
-.messages-box .message .sender small:after {
+.messages-box .message.is_me strong small .message .sender small:after {
   content: " ";
   display: inline;
 }
 @media screen and (max-width: 767px) {
-  .messages-box .message .sender small {
+  .messages-box .message.is_me strong small .message .sender small {
     float: right;
   }
 }
-.messages-box .message .sender small .danger {
+.messages-box .message.is_me strong small .message .sender small .danger {
   text-align: center;
   float: none;
 }
-.messages-box .message .message-text {
+.messages-box .message.is_me strong small .message .message-text {
   text-align: left;
   margin-left: 0px;
 }
 @media screen and (max-width: 767px) {
-  .messages-box .message .message-text {
+  .messages-box .message.is_me strong small .message .message-text {
     text-align: right;
   }
 }
-.messages-box .message .message-text .danger {
+.messages-box .message.is_me strong small .message .message-text .danger {
   text-align: center;
 }
-.messages-box .message .message-text input {
+@media screen and (max-width: 767px) {
+  .messages-box .message.is_me strong small .message .message-text .danger {
+    text-align: center;
+  }
+}
+.messages-box .message.is_me strong small .message .message-text input {
   margin: 3px 0;
   width: 100%;
 }
-.messages-box .message .message-text button > img {
+.messages-box .message.is_me strong small .message .message-text button > img {
   width: 24px;
   height: 24px;
   margin-bottom: 2px;
 }
 @media screen and (max-width: 767px) {
-  .messages-box .is_me .message-text {
+  .messages-box .is_me .message-text, .messages-box .is_me .sender, .messages-box .is_me small {
     text-align: left;
   }
 }

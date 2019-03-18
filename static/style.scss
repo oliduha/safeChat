@@ -161,7 +161,8 @@ a img {
 	position: relative;
 	top: 100px;
 	padding-bottom: 80px;
-	color: rgb(100,100,100);
+  color: rgb(100,100,100);
+  .message.is_me strong small
 	.message {
 		border-bottom: 1px solid $gray;
 		padding: 3px 0px;
@@ -200,6 +201,9 @@ a img {
       }
       .danger {
         text-align: center;
+        @media screen and (max-width: $narrow) {
+          text-align: center;
+        }
       }
 			input {
 				margin: 3px 0;
@@ -213,7 +217,7 @@ a img {
 		}
 	}
 	.is_me {
-		.message-text {
+		.message-text, .sender, small {
 			@media screen and (max-width: $narrow) {
 				text-align: left;
 			}

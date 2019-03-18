@@ -193,8 +193,8 @@ var pGen = function() {
 var unGen = function () {
   var animals = ['dog', 'cat', 'bird', 'butterfly', 'ant', 'beetle', 'tiger', 'lion', 'mouse', 'elephant',
     'panda', 'bear', 'turtle', 'spider', 'bat', 'wolf', 'cow', 'chicken', 'sheep', 'duck'];
-  var qualifs = ['dark', 'angry', 'happy', 'sad', 'wonderful', 'awsome', 'degenerated', 'zombified', 'slow', 'speed',
-    'migthy', 'magic', 'tender', 'running', 'speedy', 'little', 'big', 'stupid', 'bad', 'nice'];
+  var qualifs = ['dark', 'angry', 'happy', 'sad', 'wonderful', 'awsome', 'degenerated', 'zombi', 'slow', 'speed',
+    'migthy', 'magic', 'mad', 'running', 'speedy', 'little', 'big', 'stupid', 'bad', 'nice'];
 
   var i = Math.floor(Math.random() * 20);
   var res = qualifs[i];
