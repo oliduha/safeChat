@@ -604,12 +604,13 @@ function Chat($scope) {
         });
       });
     };
+    console.log('*/!\\* NEW CONNECTION: %O', socket);
     return socket;
   };
 
   if (!$scope.server) {
     var socket = $scope.clientConnection();
-    console.log('$scope.clientConnection(): %O', $scope.clientConnection());
+    // console.log('$scope.clientConnection(): %O', $scope.clientConnection());
   } else {
     test();
   }
