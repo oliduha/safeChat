@@ -386,14 +386,17 @@ function Chat($scope) {
         $scope.$apply();
       });
     };
+
     socket.on('new chatter', function (data) {
       new $scope.Chatter(data);
       $scope.$apply();
     });
+
     socket.on('chatter disconnected', function (data) {
       $scope.chatters.destroy(data.name);
       $scope.$apply();
     });
+
     $scope.leaveChat = function () {
       $scope.confirm('Leave chat?',
         'Are you sure you wish to leave the chat?',
@@ -408,6 +411,12 @@ function Chat($scope) {
           }
         });
     };
+
+    socket.on('bad request', function () {
+      $scope.chatters.destroy($scope.my_username);
+      socket.disconnect();
+      location.reload();
+    });
 
     // Confirm Modal
     // confirm modal default

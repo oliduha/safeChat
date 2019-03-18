@@ -276,6 +276,7 @@ var ChatApp = function () {
       self.cnxCount();
       var chatName = socket.handshake.headers.referer.slice(socket.handshake.headers.referer.lastIndexOf('/') + 1);
       debug('New Connexion id: %s - ref: %O', socket.id, socket.handshake.headers.referer);
+
       socket.on('check if locked', function (data) {
         debug('checking if locked: %s', data.chat_url);
         if (data.chat_url && self.chats[data.chat_url]) {
@@ -300,8 +301,10 @@ var ChatApp = function () {
           }
         } else {
           debug('bad request');
+          socket.emit('bad request');
         }
       });
+
       socket.on('join chat', function (data) {
         // debug('data.name: %s', data.name);
         if (!data.name) {
