@@ -93,8 +93,14 @@ function Chat($scope) {
   };
 
   $scope.Message.prototype.timeString = function () {
+    var secs = this.time.getSeconds();
     var mins = this.time.getMinutes();
     var hours = this.time.getHours();
+    if (secs === 0) {
+      secs = '00';
+    } else if (secs < 10) {
+      secs = '0' + secs;
+    }
     if (mins === 0) {
       mins = '00';
     } else if (mins < 10) {
@@ -105,7 +111,7 @@ function Chat($scope) {
     } else if (hours < 10) {
       hours = '0' + hours;
     }
-    return hours + ':' + mins;
+    return hours + ':' + mins + ':' + secs;
   };
 
   $scope.newMessage = function (text, encrypted, type, sender, time) {
@@ -244,7 +250,7 @@ function Chat($scope) {
 
     $scope.sendMessage = function () {
       var message;
-      console.log('Enc & send?', typeof $scope.message_text, '->' + $scope.message_text + '<-');
+      // console.log('Enc & send?', typeof $scope.message_text, '\'' + $scope.message_text + '\'');
       if ($scope.message_text !== ('') && typeof $scope.message_text !== 'undefined') {
         // console.log('Yes! Encoding & sending:', typeof $scope.message_text, '->' + $scope.message_text + '<-');
         var original_text = $scope.message_text;
@@ -264,7 +270,7 @@ function Chat($scope) {
         message.encrypted = false;
         // console.log('Message:', typeof message, message);
       } else {
-        console.log('Skip emmiting (blank message):', typeof $scope.message_text, '->' + $scope.message_text + '<-');
+        console.log('Skip emmiting (blank message):', typeof $scope.message_text, '\'' + $scope.message_text + '\'');
         /*message = new $scope.Message({
           text: $scope.message_text,
           type: 'init',

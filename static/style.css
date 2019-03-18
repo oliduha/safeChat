@@ -182,6 +182,7 @@ a img {
 .messages-box .message {
   border-bottom: 1px solid #e6e6e6;
   padding: 3px 0px;
+  margin: 1px 0px;
 }
 .messages-box .message .sender {
   overflow: hidden;
@@ -199,7 +200,7 @@ a img {
 }
 .messages-box .message .sender small:after {
   content: " ";
-  display: block;
+  display: inline;
 }
 @media screen and (max-width: 767px) {
   .messages-box .message .sender small {

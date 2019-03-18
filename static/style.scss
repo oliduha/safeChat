@@ -165,6 +165,7 @@ a img {
 	.message {
 		border-bottom: 1px solid $gray;
 		padding: 3px 0px;
+		margin: 1px 0px;
 		.sender {
       overflow: hidden;
       display: block;
@@ -179,7 +180,7 @@ a img {
         }
         &:after {
 					content: " ";
-					display: block;
+					display: inline;
 				}
 				@media screen and (max-width: $narrow) {
 					float: right;
