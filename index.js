@@ -362,11 +362,11 @@ var ChatApp = function () {
                 } else if (sodium.from_string(hash).length === sodium.from_string(pw).length && sodium.compare(sodium.from_string(hash), sodium.from_string(pw)) === 0) {
                   console.log('Password OK!');
                 } else {
-                  var amsg = new chat.Message({
+                  var alertmsg = new chat.Message({
                     text: data.name + ' attempted to join with a wrong password',
                     type: 'danger'
                   });
-                  self.io.sockets.to(chatName).emit('alert message', amsg);
+                  self.io.sockets.to(chatName).emit('alert message', alertmsg);
                   self.io.sockets.to(chatName).emit('wrong pw try', data);
                   console.log('Wrong password!');
                   socket.emit('callback', 'join chat', {
@@ -408,29 +408,16 @@ var ChatApp = function () {
     });
   };
 
-  self.cnxCount = function(chatName) {
-    if (chatName) {
-      self.io.of('/').in(chatName).clients(function (error, clients) {
-        debug('connections in %s: %d', chatName, clients.length);
-        self.io.sockets.to(chatName).emit('count cnx', clients.length);
-      });
-    }
-    self.io.of('/').clients(function (error, clients) {
-      debug('total connections: %d', clients.length);
-      self.io.sockets.to('/').in(chatName).emit('count totcnx', clients.length);
-    });
-  };
-
   self.setupEvents = function (socket, chat) {
     self.cnxCount(chat.chat_name);
     socket.on('new message', function (data) {
-      /* var message =  */new chat.Message(data);
+      new chat.Message(data);
       debug('redirecting new message data: %O', data);
       self.io.sockets.to(chat.chat_name).emit('new message', data);
     });
 
     socket.on('encrypted message', function (data) {
-      /* var message =  */new chat.Message(data);
+      new chat.Message(data);
       debug('redirecting encrypted message data: %O', data);
       self.io.sockets.to(chat.chat_name).emit('encrypted message', data);
     });
@@ -472,17 +459,34 @@ var ChatApp = function () {
       chat.messages = [];
       self.io.sockets.to(chat.chat_name).emit('clear messages');
     });
+
     socket.on('lock chat', function () {
       debug('%s locked the chat', socket.chatter.name);
       chat.locked = true;
       self.io.sockets.to(chat.chat_name).emit('chat locked');
       chat.systemMessage(socket.chatter.name + ' has locked the chat', self.io);
     });
+
     socket.on('unlock chat', function () {
       debug('%s unlocked the chat', chat.chat_name);
       chat.locked = false;
       self.io.sockets.to(chat.chat_name).emit('chat unlocked');
       chat.systemMessage(socket.chatter.name + ' has unlocked the chat', self.io);
+    });
+  };
+
+  self.cnxCount = function(chatName) {
+    // Count connexions in each chat room
+    for (var chat in self.chats) {
+      self.io.of('/').in(chat).clients(function (error, clients) {
+        debug('connections in %s: %d', chat, clients.length);
+        self.io.sockets.to(chat).emit('count cnx', clients.length);
+      });
+    }
+    //Count total connexions
+    self.io.of('/').clients(function (error, clients) {
+      debug('total connections: %d', clients.length);
+      self.io.sockets.to('/').in(chatName).emit('count totcnx', clients.length);
     });
   };
 
@@ -534,7 +538,7 @@ var ChatApp = function () {
     // eslint-disable-next-line no-unused-vars
     /*self.app.use(function (req, res, next) {
       debug('req.headers %O',req.headers);
-       if (req.secure) {
+      if (req.secure) {
         next();
       } else {
         // debug(req.headers.host);
@@ -571,7 +575,7 @@ var ChatApp = function () {
     // refresh cache every second
     setInterval(self.refreshCache, 1000);
     // clean unused chatnames every hour
-    setInterval(self.cleanChats, 1000 * 60 * 60);
+    setInterval(self.cleanChats, 1000 * 60 * 10);
     // trace connexions number every min
     setInterval(self.cnxCount, 1000 * 60);
 
@@ -583,18 +587,18 @@ var ChatApp = function () {
    *  Start the server (starts up the sample application).
    */
   self.start = function () {
-    //  Start the app on the specific interface (and port).
-    // self.server.listen(self.port, self.ipaddress, function () {
-    //   debug('%s: Node server https started on %s:%d ...',
-    //     Date(Date.now()), self.ipaddress, self.port);
-
-    // });
     self.server.listen(self.port, () => {
       var serverStatus = `Server listening on port:${self.port}.`;
       console.log(serverStatus);
     });
 
-    /* self.serverhttp.listen(self.httpport, self.ipaddress, function () {
+    // Start the app on the specific interface (and port).
+    /* self.server.listen(self.port, self.ipaddress, function () {
+      debug('%s: Node server https started on %s:%d ...',
+        Date(Date.now()), self.ipaddress, self.port);
+
+    });
+    self.serverhttp.listen(self.httpport, self.ipaddress, function () {
       debug('%s: Node server http started on %s:%d ...',
         Date(Date.now()), self.ipaddress, self.httpport);
     }); */

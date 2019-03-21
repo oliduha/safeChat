@@ -188,11 +188,19 @@ a img {
   padding: 3px 0px;
   margin: 1px 0px;
 }
+.messages-box .message .avatar {
+  border-radius: 32px;
+  height: 100%;
+}
 .messages-box .message .sender {
   overflow: hidden;
   display: block;
+  text-align: right;
 }
 .messages-box .message .sender .danger {
+  display: inline;
+}
+.messages-box .message .sender .system {
   display: inline;
 }
 .messages-box .message .sender small {
@@ -206,17 +214,12 @@ a img {
   content: " ";
   display: inline;
 }
-@media screen and (max-width: 767px) {
-  .messages-box .message .sender small {
-    float: right;
-  }
-}
 .messages-box .message .sender small .danger {
   text-align: center;
   float: none;
 }
 .messages-box .message .message-text {
-  text-align: left;
+  text-align: right;
   margin-left: 0px;
 }
 @media screen and (max-width: 767px) {
@@ -231,6 +234,9 @@ a img {
   .messages-box .message .message-text .danger {
     text-align: center;
   }
+}
+.messages-box .message .message-text .system {
+  display: inline;
 }
 .messages-box .message .message-text input {
   margin: 3px 0;

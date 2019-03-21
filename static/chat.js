@@ -83,6 +83,9 @@ function Chat($scope) {
     self.encrypted = data.encrypted || false;
     // undefined sender indicates system message
     self.sender = data.sender;
+    console.log('Message.sender: ', data.sender);
+    /* self.avatarCol = data.sender.split('-')[0];
+    self.avatarImg = data.sender.split('-')[1]; */
     self.type = data.type;
     self.time = (data.time ? new Date(data.time) : new Date());
     $scope.messages.push(self);

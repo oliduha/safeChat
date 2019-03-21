@@ -170,11 +170,22 @@ a img {
 	.message {
 		border-bottom: 1px solid $gray;
 		padding: 3px 0px;
-		margin: 1px 0px;
+    margin: 1px 0px;
+    .avatar {
+      border-radius: 32px;
+      height: 100%;
+    }
 		.sender {
       overflow: hidden;
       display: block;
+      text-align: right;
+      @media screen and (max-width: $narrow) {
+        //display: inline;
+      }
       .danger {
+        display: inline;
+      }
+      .system {
         display: inline;
       }
 			small {
@@ -187,10 +198,6 @@ a img {
 					content: " ";
 					display: inline;
 				}
-				@media screen and (max-width: $narrow) {
-					float: right;
-					//display: inline;
-        }
         .danger {
           text-align: center;
           float: none;
@@ -198,7 +205,7 @@ a img {
 			}
 		}
 		.message-text {
-      text-align: left;
+      text-align: right;
 			margin-left: 0px;
 			@media screen and (max-width: $narrow) {
 				text-align: right;
@@ -208,6 +215,9 @@ a img {
         @media screen and (max-width: $narrow) {
           text-align: center;
         }
+      }
+      .system {
+        display: inline;
       }
 			input {
 				margin: 3px 0;
