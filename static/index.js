@@ -1,7 +1,7 @@
 /* jshint esversion: 6 */
 /* eslint-env es6 */
-/*eslint linebreak-style: ["error", "windows"]*/
-/*global window, document, sodium, $*/
+/* eslint linebreak-style: ["error", "windows"]*/
+/* global window, document, sodium, $*/
 
 /* jshint ignore:start */
 async function generateKey() {
@@ -21,6 +21,8 @@ $(document).ready(function () {
   var storage = window.sessionStorage;
   storage.removeItem('chatpass');
   storage.removeItem('chatuname');
+  storage.removeItem('chatucol');
+  storage.removeItem('chatuani');
   gen_name().then(
     result => $('#chat_name').val(result),
     error => function() {
@@ -29,6 +31,7 @@ $(document).ready(function () {
       return;
     }
   );
+  $('#chatter_name').val(unGen());
   // $('#chat_name').val(name);
   // $('#chat_name').val(gen_name().then());
   $('#btn_gen_name').click(function() {
@@ -63,6 +66,8 @@ $(document).ready(function () {
     var spw = $('#chat_pass').val();
     var u_name = $('#chatter_name').val();
     storage.setItem('chatuname', u_name);
+    storage.setItem('chatucol', u_name.split(' ')[0]);
+    storage.setItem('chatuani', u_name.split(' ')[1]);
     // console.log('password value: (' + typeof spw +') ' + spw);
     if (spw && spw !== '') {
       pw = sodium.crypto_pwhash_str(
@@ -198,17 +203,17 @@ var unGen = function () {
     'Giraffe', 'Cow', 'Shark', 'Horse', 'Duck',
     'Deer', 'Fox', 'Frog', 'Pig', 'Snake'
   ];
-  // eslint-disable-next-line no-unused-vars
+  /*// eslint-disable-next-line no-unused-vars
   var qualifs = [
     'Dark', 'Angry', 'Happy', 'Sad', 'Wonderful',
     'Awsome', 'Degenerated', 'Zombi', 'Slow', 'Flying',
     'Migthy', 'Magic', 'Mad', 'Running', 'Speedy',
-    'Little', 'Big', 'Stupid', 'Bad', 'Nice'];
+    'Little', 'Big', 'Stupid', 'Bad', 'Nice'];*/
   var colors = [
     'Blue', 'Red', 'Yellow', 'Green', 'Purple',
-    'Pink', 'Marron', 'Black', 'Magenta', 'Cyan',
+    'Pink', 'Maroon', 'Black', 'Magenta', 'Cyan',
     'Aquamarine', 'Orange', 'Indigo', 'Gray', 'Silver',
-    'Amethyst', 'Sienna', 'Brown', 'Tan', 'Navy',
+    'Olive', 'Sienna', 'Brown', 'Tan', 'Navy',
     'Teal', 'Lime', 'Chartreuse', 'Lavender', 'Gold'
   ];
 
