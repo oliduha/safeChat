@@ -97,7 +97,7 @@
         </div>
         <div class="message row-fluid color-{{chatters.get(message.sender).id % 6}} {{chatters.get(message.sender).isMe()}} {{message.type}}"
           ng-repeat="message in messages | orderBy: 'time'">
-          <img src="img/avatars/{{message.avatarImg}}.png" class="avatar {{message.avatarCol}}">
+          <img src="img/avatars/{{message.sender.split(' ')[1] || ''}}-i.png" class="avatar {{message.sender.split(' ')[0].toLowerCase()}}">
           <strong class="sender span3 {{message.type}}">
             <small class="{{message.type}}">{{message.timeString()}}</small>{{message.sender}}
           </strong>

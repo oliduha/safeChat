@@ -190,11 +190,15 @@ a img {
 }
 .messages-box .message .avatar {
   border-radius: 32px;
-  height: 100%;
+  height: 24px;
+  display: inline-block;
+}
+.messages-box .message .system {
+  display: inline;
 }
 .messages-box .message .sender {
   overflow: hidden;
-  display: block;
+  display: inline;
   text-align: right;
 }
 .messages-box .message .sender .danger {
@@ -221,6 +225,7 @@ a img {
 .messages-box .message .message-text {
   text-align: right;
   margin-left: 0px;
+  display: block;
 }
 @media screen and (max-width: 767px) {
   .messages-box .message .message-text {
@@ -235,9 +240,6 @@ a img {
     text-align: center;
   }
 }
-.messages-box .message .message-text .system {
-  display: inline;
-}
 .messages-box .message .message-text input {
   margin: 3px 0;
   width: 100%;
@@ -246,6 +248,9 @@ a img {
   width: 24px;
   height: 24px;
   margin-bottom: 2px;
+}
+.messages-box .message .text-message.system {
+  display: inline;
 }
 @media screen and (max-width: 767px) {
   .messages-box .is_me .message-text, .messages-box .is_me .sender, .messages-box .is_me small {
@@ -338,6 +343,106 @@ a img {
 
 .color-null {
   opacity: 0.75;
+}
+
+.blue {
+  background-color: BLue;
+}
+
+.red {
+  background-color: Red;
+}
+
+.yellow {
+  background-color: Yellow;
+}
+
+.green {
+  background-color: Green;
+}
+
+.purple {
+  background-color: Purple;
+}
+
+.pink {
+  background-color: Pink;
+}
+
+.maroon {
+  background-color: Maroon;
+}
+
+.black {
+  background-color: Black;
+}
+
+.magenta {
+  background-color: Magenta;
+}
+
+.cyan {
+  background-color: Cyan;
+}
+
+.aquamarine {
+  background-color: Aquamarine;
+}
+
+.orange {
+  background-color: Orange;
+}
+
+.indigo {
+  background-color: Indigo;
+}
+
+.gray {
+  background-color: Gray;
+}
+
+.silver {
+  background-color: Silver;
+}
+
+.olive {
+  background-color: Olive;
+}
+
+.sienna {
+  background-color: Sienna;
+}
+
+.brown {
+  background-color: Brown;
+}
+
+.tan {
+  background-color: Tan;
+}
+
+.navy {
+  background-color: Navy;
+}
+
+.teal {
+  background-color: Teal;
+}
+
+.lime {
+  background-color: Lime;
+}
+
+.chartreuse {
+  background-color: Chartreuse;
+}
+
+.lavender {
+  background-color: Lavender;
+}
+
+.gold {
+  background-color: Gold;
 }
 
 .danger {

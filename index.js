@@ -6,6 +6,7 @@ var fs = require('fs');
 var makeChat = require('./static/chat.js');
 var sodium = require('libsodium-wrappers');
 var serverConfigurations = require('./serverconfig');
+// var common = require('./static/common');
 
 /**
  *  Define the sample application.
@@ -45,6 +46,9 @@ var ChatApp = function () {
     for (var i = 0; i < self.static_files.length; i++) {
       self.zcache[self.static_files[i]] = fs.readFileSync('./static/' + self.static_files[i]);
     }
+    /* for (var j = 0; j < self.image_files.length; j++) {
+      self.zcache[self.image_files[j]] = fs.readFileSync('./static/' + self.image_files[j]);
+    } */
   };
 
   var readTheFile = function(i) {
@@ -169,13 +173,13 @@ var ChatApp = function () {
       }
     };
 
-    /*
+
     // Add routes for uncached image files
-    for (var i=0; i<self.image_files.length; i++) {
-        debug('Creating uncached route for ' + self.image_files[i]);
-        self.routes['/' + self.image_files[i]] = self.createUncachedRoute('./images/' + self.image_files[i]);
+    for (var j=0; j<self.image_files.length; j++) {
+      debug('Creating uncached route for ' + self.image_files[j]);
+      self.routes['/img/avatars/' + self.image_files[j]] = self.createUncachedRoute('./static/img/avatars/' + self.image_files[j]);
     }
-    */
+
 
     // Add routes for static files in cache
     for (var i = 0; i < self.static_files.length; i++) {
@@ -195,8 +199,8 @@ var ChatApp = function () {
         self.createStaticRoute('chat.html')(req, res);
       } else {
         res.status(302);
-        debug('redirecting to https://%s', req.headers.host);
-        res.setHeader('Location', 'https://' + req.headers.host);
+        debug('redirecting to http://%s', req.headers.host);
+        res.setHeader('Location', 'http://' + req.headers.host);
         res.setHeader('Content-Type', 'text/html');
         var error_page = '<html><body style="';
         error_page += 'text-align: center; color: #444448; background-color: #EEEEF3; font-family: sans-serif';
@@ -251,13 +255,13 @@ var ChatApp = function () {
   };
 
 
-  self.removeFileExtension = function (file_name) {
+  /* self.removeFileExtension = function (file_name) {
     var slice = file_name.lastIndexOf('.');
     if (slice > 0) {
       return file_name.substring(0, slice);
     }
     return file_name;
-  };
+  }; */
 
   self.createChat = function (chat_name, pw) {
     // debug('pw:', pw);
@@ -493,26 +497,23 @@ var ChatApp = function () {
   self.cleanChats = function () {
     var nbchats = 0, nbchatsc = 0;
     debug('cleaning chats...');
-    // debug('self.chats: ', typeof self.chats, self.chats);
     for (var chat in self.chats) {
       nbchats++;
-      // debug('chat: (%s) %O', typeof self.chats[chat], self.chats[chat]);
-      /* for (var prop in self.chats[chat]) {
-        if (self.chats[chat].hasOwnProperty(prop)) {
-          debug('prop: ', self.chats[chat][prop]);
-        }
-      } */
-      if (self.chats[chat].chatters.length === 0 && (new Date() - self.chats[chat].birth) > 1000*60*60) {
-        debug('removing a %sm old chat', (new Date() - self.chats[chat].birth) / (1000*60));
-        // chat = undefined;
-        nbchatsc++;
-        delete self.chats[chat];
-      }
+      debug('chat: %s (%s)', chat, typeof chat);
+      debug('self.chats[chat]: %s (%s)', self.chats[chat], typeof  self.chats[chat]);
       if (self.chats[chat] === undefined) {
         debug('removing a deleted chat');
-        // chat = undefined;
         nbchatsc++;
         delete self.chats[chat];
+      } else {
+        debug('chat %s have %s chatters)', chat, self.chats[chat].chatters.length);
+        // remove a chat if it exists for more than 5 min and has no chatter
+        if (self.chats[chat] && self.chats[chat].chatters && self.chats[chat].chatters.length === 0 && (new Date() - self.chats[chat].birth) > 1000 * 60 * 5) {
+          debug('removing a %sm old chat', (new Date() - self.chats[chat].birth) / (1000 * 60));
+          // chat = undefined;
+          nbchatsc++;
+          delete self.chats[chat];
+        }
       }
     }
     debug('%s/%s chat(s) cleaned.', nbchatsc, nbchats);
@@ -569,13 +570,13 @@ var ChatApp = function () {
     self.port = serverConfigurations.serverPort;
     // self.setupVariables();
     self.static_files = self.dirFiles('./static/');
-    // self.image_files = self.dirFiles('./images/');
+    self.image_files = self.dirFiles('./static/img/avatars/');
     self.populateCache();
     //self.setupTerminationHandlers();
     // refresh cache every second
     setInterval(self.refreshCache, 1000);
-    // clean unused chatnames every hour
-    setInterval(self.cleanChats, 1000 * 60 * 10);
+    // clean unused chatnames 10 min
+    setInterval(self.cleanChats, 1000 * 60/* * 10*/); // 1mn for tests
     // trace connexions number every min
     setInterval(self.cnxCount, 1000 * 60);
 
