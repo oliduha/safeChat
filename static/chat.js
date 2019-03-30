@@ -83,6 +83,9 @@ function Chat($scope) {
     self.encrypted = data.encrypted || false;
     // undefined sender indicates system message
     self.sender = data.sender;
+    console.log('Message.sender: ', data.sender);
+    /* self.avatarCol = data.sender.split('-')[0];
+    self.avatarImg = data.sender.split('-')[1]; */
     self.type = data.type;
     self.time = (data.time ? new Date(data.time) : new Date());
     $scope.messages.push(self);
@@ -165,15 +168,17 @@ function Chat($scope) {
     // console.log('self.port', self.port);
     // console.log('https://' + window.location.hostname + ':' + (self.port || 8043));
     // socket = io.connect('https://' + window.location.hostname + ':' + (self.port || 8043), {
-    if (window.location.hostname === 'localhost') {
-      socket = io.connect('http://' + window.location.hostname/* + ':' + (self.port || 8080)*/, {
-        secure: true
-      });
-    } else {
-      socket = io.connect('https://' + window.location.hostname /* + ':' + (self.port || 8080)*/ , {
-        secure: true
-      });
-    }
+
+    // if (window.location.hostname === 'localhost') {
+    socket = io.connect('http://' + window.location.hostname/* + ':' + (self.port || 8080)*/, {
+      secure: true
+    });
+    // } else {
+    //   socket = io.connect('https://' + window.location.hostname /* + ':' + (self.port || 8080)*/ , {
+    //     secure: true
+    //   });
+    // }
+
     //console.log('self.port:', self.port);
 
     socket.callback = {};
@@ -451,6 +456,12 @@ function Chat($scope) {
           $scope.setUsername();
           $scope.$apply();
         }
+      } else {
+        var u_name = $scope.unGen();
+        $('#user_name').val(u_name.join(' '));
+        $scope.storage.setItem('chatuname', u_name.join(' '));
+        $scope.storage.setItem('chatucol', u_name[0]);
+        $scope.storage.setItem('chatuani', u_name[1]);
       }
     });
 
@@ -572,6 +583,38 @@ function Chat($scope) {
       }
     };
 
+    $scope.unGen = function () {
+      var animals = [
+        'Dog', 'Cat', 'Bird', 'Butterfly', 'Ant',
+        'Rabbit', 'Ape', 'Panther', 'Mouse', 'Elephant',
+        'Fish', 'Bear', 'Turtle', 'Spider', 'Bat',
+        'Giraffe', 'Cow', 'Shark', 'Horse', 'Duck',
+        'Deer', 'Fox', 'Frog', 'Pig', 'Snake'
+      ];
+      /*// eslint-disable-next-line no-unused-vars
+      var qualifs = [
+        'Dark', 'Angry', 'Happy', 'Sad', 'Wonderful',
+        'Awsome', 'Degenerated', 'Zombi', 'Slow', 'Flying',
+        'Migthy', 'Magic', 'Mad', 'Running', 'Speedy',
+        'Little', 'Big', 'Stupid', 'Bad', 'Nice'];*/
+      var colors = [
+        'Blue', 'Red', 'Yellow', 'Green', 'Purple',
+        'Pink', 'Marron', 'Black', 'Magenta', 'Cyan',
+        'Aquamarine', 'Orange', 'Indigo', 'Gray', 'Silver',
+        'Olive', 'Sienna', 'Brown', 'Tan', 'Navy',
+        'Teal', 'Lime', 'Chartreuse', 'Lavender', 'Gold'
+      ];
+
+      /*var i = Math.floor(Math.random() * 20);
+      var res = qualifs[i];*/
+      var i = Math.floor(Math.random() * 25);
+      var res = [colors[i]];
+      i = Math.floor(Math.random() * 25);
+      res.push(animals[i]);
+      return res;
+    };
+
+
     // Copy URL
     $scope.copyUrl = function() { // eslint-disable-line no-unused-vars
       $('#url-txt').select();
@@ -596,6 +639,7 @@ function Chat($scope) {
         });
       });
     };
+
     $scope.hideSidebar = function () {
       sidebar.animate({
         left: '-220px'
@@ -605,6 +649,7 @@ function Chat($scope) {
         });
       });
     };
+
     console.log('*/!\\* NEW CONNECTION: %O', socket);
     return socket;
   };

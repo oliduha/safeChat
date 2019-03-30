@@ -6,9 +6,10 @@ var fs = require('fs');
 var makeChat = require('./static/chat.js');
 var sodium = require('libsodium-wrappers');
 var serverConfigurations = require('./serverconfig');
+// var common = require('./static/common');
 
 /**
- *  Define the sample application.
+ *  Define the chat application.
  */
 var ChatApp = function () {
   //  Scope.
@@ -45,6 +46,9 @@ var ChatApp = function () {
     for (var i = 0; i < self.static_files.length; i++) {
       self.zcache[self.static_files[i]] = fs.readFileSync('./static/' + self.static_files[i]);
     }
+    /* for (var j = 0; j < self.image_files.length; j++) {
+      self.zcache[self.image_files[j]] = fs.readFileSync('./static/' + self.image_files[j]);
+    } */
   };
 
   var readTheFile = function(i) {
@@ -169,13 +173,12 @@ var ChatApp = function () {
       }
     };
 
-    /*
+
     // Add routes for uncached image files
-    for (var i=0; i<self.image_files.length; i++) {
-        debug('Creating uncached route for ' + self.image_files[i]);
-        self.routes['/' + self.image_files[i]] = self.createUncachedRoute('./images/' + self.image_files[i]);
+    for (var j=0; j<self.image_files.length; j++) {
+      debug('Creating uncached route for ' + self.image_files[j]);
+      self.routes['/img/avatars/' + self.image_files[j]] = self.createUncachedRoute('./static/img/avatars/' + self.image_files[j]);
     }
-    */
 
     // Add routes for static files in cache
     for (var i = 0; i < self.static_files.length; i++) {
@@ -195,8 +198,8 @@ var ChatApp = function () {
         self.createStaticRoute('chat.html')(req, res);
       } else {
         res.status(302);
-        debug('redirecting to https://%s', req.headers.host);
-        res.setHeader('Location', 'https://' + req.headers.host);
+        debug('redirecting to http://%s', req.headers.host);
+        res.setHeader('Location', 'http://' + req.headers.host);
         res.setHeader('Content-Type', 'text/html');
         var error_page = '<html><body style="';
         error_page += 'text-align: center; color: #444448; background-color: #EEEEF3; font-family: sans-serif';
@@ -251,13 +254,13 @@ var ChatApp = function () {
   };
 
 
-  self.removeFileExtension = function (file_name) {
+  /* self.removeFileExtension = function (file_name) {
     var slice = file_name.lastIndexOf('.');
     if (slice > 0) {
       return file_name.substring(0, slice);
     }
     return file_name;
-  };
+  }; */
 
   self.createChat = function (chat_name, pw) {
     // debug('pw:', pw);
@@ -362,11 +365,11 @@ var ChatApp = function () {
                 } else if (sodium.from_string(hash).length === sodium.from_string(pw).length && sodium.compare(sodium.from_string(hash), sodium.from_string(pw)) === 0) {
                   console.log('Password OK!');
                 } else {
-                  var amsg = new chat.Message({
+                  var alertmsg = new chat.Message({
                     text: data.name + ' attempted to join with a wrong password',
                     type: 'danger'
                   });
-                  self.io.sockets.to(chatName).emit('alert message', amsg);
+                  self.io.sockets.to(chatName).emit('alert message', alertmsg);
                   self.io.sockets.to(chatName).emit('wrong pw try', data);
                   console.log('Wrong password!');
                   socket.emit('callback', 'join chat', {
@@ -408,29 +411,16 @@ var ChatApp = function () {
     });
   };
 
-  self.cnxCount = function(chatName) {
-    if (chatName) {
-      self.io.of('/').in(chatName).clients(function (error, clients) {
-        debug('connections in %s: %d', chatName, clients.length);
-        self.io.sockets.to(chatName).emit('count cnx', clients.length);
-      });
-    }
-    self.io.of('/').clients(function (error, clients) {
-      debug('total connections: %d', clients.length);
-      self.io.sockets.to('/').in(chatName).emit('count totcnx', clients.length);
-    });
-  };
-
   self.setupEvents = function (socket, chat) {
     self.cnxCount(chat.chat_name);
     socket.on('new message', function (data) {
-      /* var message =  */new chat.Message(data);
+      new chat.Message(data);
       debug('redirecting new message data: %O', data);
       self.io.sockets.to(chat.chat_name).emit('new message', data);
     });
 
     socket.on('encrypted message', function (data) {
-      /* var message =  */new chat.Message(data);
+      new chat.Message(data);
       debug('redirecting encrypted message data: %O', data);
       self.io.sockets.to(chat.chat_name).emit('encrypted message', data);
     });
@@ -472,12 +462,14 @@ var ChatApp = function () {
       chat.messages = [];
       self.io.sockets.to(chat.chat_name).emit('clear messages');
     });
+
     socket.on('lock chat', function () {
       debug('%s locked the chat', socket.chatter.name);
       chat.locked = true;
       self.io.sockets.to(chat.chat_name).emit('chat locked');
       chat.systemMessage(socket.chatter.name + ' has locked the chat', self.io);
     });
+
     socket.on('unlock chat', function () {
       debug('%s unlocked the chat', chat.chat_name);
       chat.locked = false;
@@ -486,29 +478,41 @@ var ChatApp = function () {
     });
   };
 
+  self.cnxCount = function(chatName) {
+    // Count connexions in each chat room
+    for (var chat in self.chats) {
+      self.io.of('/').in(chat).clients(function (error, clients) {
+        debug('connections in %s: %d', chat, clients.length);
+        self.io.sockets.to(chat).emit('count cnx', clients.length);
+      });
+    }
+    //Count total connexions
+    self.io.of('/').clients(function (error, clients) {
+      debug('total connections: %d', clients.length);
+      self.io.sockets.to('/').in(chatName).emit('count totcnx', clients.length);
+    });
+  };
+
   self.cleanChats = function () {
     var nbchats = 0, nbchatsc = 0;
     debug('cleaning chats...');
-    // debug('self.chats: ', typeof self.chats, self.chats);
     for (var chat in self.chats) {
       nbchats++;
-      // debug('chat: (%s) %O', typeof self.chats[chat], self.chats[chat]);
-      /* for (var prop in self.chats[chat]) {
-        if (self.chats[chat].hasOwnProperty(prop)) {
-          debug('prop: ', self.chats[chat][prop]);
-        }
-      } */
-      if (self.chats[chat].chatters.length === 0 && (new Date() - self.chats[chat].birth) > 1000*60*60) {
-        debug('removing a %sm old chat', (new Date() - self.chats[chat].birth) / (1000*60));
-        // chat = undefined;
-        nbchatsc++;
-        delete self.chats[chat];
-      }
+      debug('chat: %s (%s)', chat, typeof chat);
+      debug('self.chats[chat]: %s (%s)', self.chats[chat], typeof  self.chats[chat]);
       if (self.chats[chat] === undefined) {
         debug('removing a deleted chat');
-        // chat = undefined;
         nbchatsc++;
         delete self.chats[chat];
+      } else {
+        debug('chat %s have %s chatters)', chat, self.chats[chat].chatters.length);
+        // remove a chat if it exists for more than 5 min and has no chatter
+        if (self.chats[chat] && self.chats[chat].chatters && self.chats[chat].chatters.length === 0 && (new Date() - self.chats[chat].birth) > 1000 * 60 * 5) {
+          debug('removing a %sm old chat', (new Date() - self.chats[chat].birth) / (1000 * 60));
+          // chat = undefined;
+          nbchatsc++;
+          delete self.chats[chat];
+        }
       }
     }
     debug('%s/%s chat(s) cleaned.', nbchatsc, nbchats);
@@ -534,7 +538,7 @@ var ChatApp = function () {
     // eslint-disable-next-line no-unused-vars
     /*self.app.use(function (req, res, next) {
       debug('req.headers %O',req.headers);
-       if (req.secure) {
+      if (req.secure) {
         next();
       } else {
         // debug(req.headers.host);
@@ -565,13 +569,13 @@ var ChatApp = function () {
     self.port = serverConfigurations.serverPort;
     // self.setupVariables();
     self.static_files = self.dirFiles('./static/');
-    // self.image_files = self.dirFiles('./images/');
+    self.image_files = self.dirFiles('./static/img/avatars/');
     self.populateCache();
     //self.setupTerminationHandlers();
     // refresh cache every second
     setInterval(self.refreshCache, 1000);
-    // clean unused chatnames every hour
-    setInterval(self.cleanChats, 1000 * 60 * 60);
+    // clean unused chatnames 10 min
+    setInterval(self.cleanChats, 1000 * 60/* * 10*/); // 1mn for tests
     // trace connexions number every min
     setInterval(self.cnxCount, 1000 * 60);
 
@@ -583,18 +587,18 @@ var ChatApp = function () {
    *  Start the server (starts up the sample application).
    */
   self.start = function () {
-    //  Start the app on the specific interface (and port).
-    // self.server.listen(self.port, self.ipaddress, function () {
-    //   debug('%s: Node server https started on %s:%d ...',
-    //     Date(Date.now()), self.ipaddress, self.port);
-
-    // });
     self.server.listen(self.port, () => {
       var serverStatus = `Server listening on port:${self.port}.`;
       console.log(serverStatus);
     });
 
-    /* self.serverhttp.listen(self.httpport, self.ipaddress, function () {
+    // Start the app on the specific interface (and port).
+    /* self.server.listen(self.port, self.ipaddress, function () {
+      debug('%s: Node server https started on %s:%d ...',
+        Date(Date.now()), self.ipaddress, self.port);
+
+    });
+    self.serverhttp.listen(self.httpport, self.ipaddress, function () {
       debug('%s: Node server http started on %s:%d ...',
         Date(Date.now()), self.ipaddress, self.httpport);
     }); */
