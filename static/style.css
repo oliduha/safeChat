@@ -15,7 +15,7 @@ a img {
 }
 
 .icon-loading {
-  background-image: url("loading.gif");
+  background-image: url("img/loading.gif");
   background-repeat: no-repeat;
   background-position: center 0px;
   display: inline-block;

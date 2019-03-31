@@ -46,9 +46,12 @@ var ChatApp = function () {
     for (var i = 0; i < self.static_files.length; i++) {
       self.zcache[self.static_files[i]] = fs.readFileSync('./static/' + self.static_files[i]);
     }
-    /* for (var j = 0; j < self.image_files.length; j++) {
-      self.zcache[self.image_files[j]] = fs.readFileSync('./static/' + self.image_files[j]);
-    } */
+    for (var j = 0; j < self.image_files.length; j++) {
+      self.zcache[self.image_files[j]] = fs.readFileSync('./static/img/' + self.image_files[j]);
+    }
+    for (var k = 0; k < self.icon_files.length; k++) {
+      self.zcache[self.icon_files[k]] = fs.readFileSync('./static/img/icons/' + self.icon_files[k]);
+    }
   };
 
   var readTheFile = function(i) {
@@ -73,9 +76,7 @@ var ChatApp = function () {
       var stats = fs.statSync(dir_path + dir_items[i]);
       if (stats.isFile()) {
         file_list.push(dir_items[i]);
-      } else {
-        // dir_items[i] is a directory
-      }
+      } // else { // dir_items[i] is a directory }
     }
     return file_list;
   };
@@ -174,16 +175,28 @@ var ChatApp = function () {
     };
 
 
-    // Add routes for uncached image files
-    for (var j=0; j<self.image_files.length; j++) {
-      debug('Creating uncached route for ' + self.image_files[j]);
-      self.routes['/img/avatars/' + self.image_files[j]] = self.createUncachedRoute('./static/img/avatars/' + self.image_files[j]);
-    }
-
     // Add routes for static files in cache
     for (var i = 0; i < self.static_files.length; i++) {
       debug('Creating cached route for %s', self.static_files[i]);
       self.routes['/' + self.static_files[i]] = self.createStaticRoute(self.static_files[i]);
+    }
+
+    // Add routes for image files in cache
+    for (var j = 0; j < self.image_files.length; j++) {
+      debug('Creating cached route for image %s', self.image_files[j]);
+      self.routes['/img/' + self.image_files[j]] = self.createStaticRoute(self.image_files[j]);
+    }
+
+    // Add routes for icon files in cache
+    for (var k = 0; k < self.icon_files.length; k++) {
+      debug('Creating cached route for icon %s', self.icon_files[k]);
+      self.routes['/img/icons/' + self.icon_files[k]] = self.createStaticRoute(self.icon_files[k]);
+    }
+
+    // Add routes for uncached avatar files
+    for (var l = 0; l < self.avatar_files.length; l++) {
+      debug('Creating uncached route for ' + self.avatar_files[l]);
+      self.routes['/img/avatars/' + self.avatar_files[l]] = self.createUncachedRoute('./static/img/avatars/' + self.avatar_files[l]);
     }
 
     self.routes['/*'] = function (req, res) {
@@ -569,7 +582,9 @@ var ChatApp = function () {
     self.port = serverConfigurations.serverPort;
     // self.setupVariables();
     self.static_files = self.dirFiles('./static/');
-    self.image_files = self.dirFiles('./static/img/avatars/');
+    self.image_files = self.dirFiles('./static/img/');
+    self.icon_files = self.dirFiles('./static/img/icons/');
+    self.avatar_files = self.dirFiles('./static/img/avatars/');
     self.populateCache();
     //self.setupTerminationHandlers();
     // refresh cache every second

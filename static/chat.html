@@ -4,16 +4,12 @@
   <title>SafeChat</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" integrity="sha256-BJ/G+e+y7bQdrYkS2RBTyNfBHpA9IuGaPmf9htub5MQ=" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
-    crossorigin="anonymous" />
+  <link rel="stylesheet" href="bootstrap.4.3.1.min.css" />
   <link rel="stylesheet" href="style.css" />
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-    crossorigin="anonymous"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
-    crossorigin="anonymous"></script>
-  <script src="/socket.io/socket.io.js" crossorigin="anonymous"></script>
+  <script src="jquery-3.3.1.min.js"></script>
+  <script src="angular.1.2.0.min.js"></script>
+  <script src="bootstrap.4.3.1.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
   <script src="sodium.js"></script>
   <script src="chat.js"></script>
   <!--<script src="bundle.js"></script>-->
@@ -45,9 +41,9 @@
 
     <div class="left-column">
       <button class="btn btn-outline-secondary btn-sm compact-only" ng-click="hideSidebar()">
-        <span class="oi oi-chevron-left" title="Hide sidebar" aria-hidden="true"></span>
+        <img class="btn-icon" src="img/icons/chevron-left.png" title="Hide sidebar" aria-hidden="true" />
       </button>
-      <img src="safechat.png" class="logo" alt="logo SafeChat" />
+      <img src="img/safechat.png" class="logo" alt="logo SafeChat" />
       <span id="tot_cnx" class="badge badge-pill badge-dark" title="Total connexions">{{totCnx}}</span>
       <span id="nb_cnx" class="badge badge-pill badge-warning" title="Connexions in this chat">{{nbCnx}}</span>
       <ul class="nav nav-tabs">
@@ -56,29 +52,29 @@
         </li>
       </ul>
       <button class="btn btn-danger" ng-show="my_username" ng-click="clearMessages()">
-        <span class="oi oi-trash icon-white" aria-hidden="true"></span> Clear Messages
+        <img class="btn-icon icon-white" src="img/icons/trash.png" aria-hidden="true" /> Clear Messages
       </button><br />
       <button class="btn btn-outline-warning" ng-show="my_username && !locked" ng-click="toggleLocked()">
-        <span class="oi oi-lock-unlocked" aria-hidden="true" ng-hide="locked"></span>
+        <img class="btn-icon" src="img/icons/lock-unlocked.png" aria-hidden="true" ng-hide="locked" />
         <span ng-hide="locked">Lock Chat</span>
       </button>
       <button class="btn btn-warning" ng-show="my_username && locked" ng-click="toggleLocked()">
-        <span class="oi oi-lock-locked" aria-hidden="true" ng-show="locked"></span>
+        <img class="btn-icon" src="img/icons/lock-locked.png" aria-hidden="true" ng-show="locked" />
         <span ng-show="locked">Unlock Chat</span>
       </button>
       <br />
       <button class="btn btn-outline-dark" ng-show="my_username" ng-click="leaveChat()">
-        <span class="oi oi-arrow-left" aria-hidden="true"></span> Leave Chat
+        <img class="btn-icon" src="img/icons/arrow-left.png" aria-hidden="true" /> Leave Chat
       </button><br />
-      <a class="hidden" href="#username_modal" ng-show="my_username" data-toggle="modal">
+      <!--<a class="hidden" href="#username_modal" ng-show="my_username" data-toggle="modal">
         Change User Name
-      </a>
+      </a>-->
     </div>
 
     <div class="right-column">
       <div class="title-bar">
         <button class="btn btn-outline-secondary btn-sm compact-only" ng-show="my_username" ng-click="showSidebar()">
-          <span class="oi oi-chevron-right" title="Show sidebar" aria-hidden="true"></span>
+          <img class="btn-icon" src="img/icons/chevron-right.png" title="Show sidebar" aria-hidden="true" />
         </button>
         <h1>{{chat_name}}</h1>
       </div>
@@ -88,7 +84,7 @@
             Securely send this address to anyone you want to chat with: <br />
             <input id="url-txt" type="text" class="form-control form-control-lg" value="{{page_url}}" />
             <button id="btn-copy" class="btn btn-primary btn-block" ng-click="copyUrl()">
-              <img src="clippy.png" alt="Copy URL to your clipboard" title="Copy URL" />
+              <img src="img/clippy.png" alt="Copy URL to your clipboard" title="Copy URL" />
             </button>
           </div>
           <div class="message-text">

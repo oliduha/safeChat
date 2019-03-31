@@ -170,9 +170,9 @@ function Chat($scope) {
     // socket = io.connect('https://' + window.location.hostname + ':' + (self.port || 8043), {
 
     // if (window.location.hostname === 'localhost') {
-    socket = io.connect('http://' + window.location.hostname/* + ':' + (self.port || 8080)*/, {
+    socket = io.connect('http://' + window.location.hostname/* + ':' + (self.port || 8080), {
       secure: true
-    });
+    }*/);
     // } else {
     //   socket = io.connect('https://' + window.location.hostname /* + ':' + (self.port || 8080)*/ , {
     //     secure: true
