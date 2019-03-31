@@ -46,6 +46,9 @@ var ChatApp = function () {
     for (var i = 0; i < self.static_files.length; i++) {
       self.zcache[self.static_files[i]] = fs.readFileSync('./static/' + self.static_files[i]);
     }
+    for (var il = 0; il < self.lib_files.length; il++) {
+      self.zcache[self.lib_files[il]] = fs.readFileSync('./static/lib/' + self.lib_files[il]);
+    }
     for (var j = 0; j < self.image_files.length; j++) {
       self.zcache[self.image_files[j]] = fs.readFileSync('./static/img/' + self.image_files[j]);
     }
@@ -54,18 +57,22 @@ var ChatApp = function () {
     }
   };
 
-  var readTheFile = function(i) {
-    var path = self.static_files[i];
-    fs.readFile('./static/' + path, function (error, data) {
-      if (!error) {
-        self.zcache[path] = data;
-      }
-    });
-  };
-
   self.refreshCache = function () {
-    for (var i = 0; i < self.static_files.length; i++) {
-      readTheFile(i);
+    var i, path;
+    for (i = 0; i < self.static_files.length; i++) {
+      path = self.static_files[i];
+      fs.readFile('./static/' + path, function (error, data) {
+        if (!error) {
+          self.zcache[path] = data;
+        }
+      });
+    }for (i = 0; i < self.lib_files.length; i++) {
+      path = 'lib/' + self.lib_files[i];
+      fs.readFile('./static/' + path, function (error, data) {
+        if (!error) {
+          self.zcache[path] = data;
+        }
+      });
     }
   };
 
@@ -181,6 +188,12 @@ var ChatApp = function () {
       self.routes['/' + self.static_files[i]] = self.createStaticRoute(self.static_files[i]);
     }
 
+    // Add routes for library files in cache
+    for (var il = 0; il < self.lib_files.length; il++) {
+      debug('Creating cached route for library %s', self.lib_files[il]);
+      self.routes['/lib/' + self.lib_files[il]] = self.createStaticRoute(self.lib_files[il]);
+    }
+
     // Add routes for image files in cache
     for (var j = 0; j < self.image_files.length; j++) {
       debug('Creating cached route for image %s', self.image_files[j]);
@@ -291,7 +304,7 @@ var ChatApp = function () {
     self.io.sockets.on('connection', function (socket) {
       self.cnxCount();
       var chatName = socket.handshake.headers.referer.slice(socket.handshake.headers.referer.lastIndexOf('/') + 1);
-      debug('New Connexion id: %s - ref: %O', socket.id, socket.handshake.headers.referer);
+      debug('NEW CONNECTION [ID:%s] - ref: %O', socket.id, socket.handshake.headers.referer);
 
       socket.on('check if locked', function (data) {
         debug('checking if locked: %s', data.chat_url);
@@ -582,6 +595,7 @@ var ChatApp = function () {
     self.port = serverConfigurations.serverPort;
     // self.setupVariables();
     self.static_files = self.dirFiles('./static/');
+    self.lib_files = self.dirFiles('./static/lib/');
     self.image_files = self.dirFiles('./static/img/');
     self.icon_files = self.dirFiles('./static/img/icons/');
     self.avatar_files = self.dirFiles('./static/img/avatars/');

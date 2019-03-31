@@ -5,10 +5,11 @@
   <meta charset="UTF-8">
   <title>SafeChat</title>
   <meta name="viewport" content="width=350, user-scalable=no" />
-  <link rel="stylesheet" href="bootstrap.4.3.1.min.css">
-  <script src="sodium.js" async></script>
-  <script src="jquery-3.3.1.min.js"></script>
-  <script src="bootstrap.4.3.1.min.js"></script>
+  <link rel="stylesheet" href="lib/bootstrap.4.3.1.min.css">
+  <script src="lib/sodium.js" async></script>
+  <script src="lib/jquery-3.3.1.min.js"></script>
+  <script src="lib/bootstrap.4.3.1.min.js"></script>
+  <script src="index.js"></script>
   <style>
     html {
       overflow-y: scroll;
@@ -106,20 +107,17 @@
       width: 78px;
     }
 	</style>
-  <script src="index.js"></script>
 </head>
 
 <body ng-app>
   <div class="container">
     <div class="hero-unit">
-      <!--<h1>ChatSafe</h1>
-				<br />-->
       <img src="img/safechat_medium.png" class="logo" alt="logo SafeChat" />
 			<p id="logo-text-overlay" class="text-warning">
           <span class="lto-left">Chat with</span> anyone, anywhere, securely
       </p>
       <div class="alert alert-danger">
-        Your Browser does not support ChatSafe
+        Your Browser does not support ChatSafe while javascript
       </div>
       <h5><em>Simple encrypted instant messaging</em></h5><br />
       <form class="input-append" id="new_chat_form">
