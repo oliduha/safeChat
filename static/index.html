@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<html lang="eng">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <title>SafeChat</title>
   <meta name="viewport" content="width=350, user-scalable=no" />
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <script src="sodium.js" async></script>
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
-  crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="lib/bootstrap.min.css">
+  <script src="lib/sodium.js" async></script>
+  <script src="lib/jquery-3.3.1.min.js"></script>
+  <script src="lib/bootstrap.min.js"></script>
+  <script src="index.js"></script>
   <style>
     html {
       overflow-y: scroll;
@@ -108,22 +107,20 @@
       width: 78px;
     }
 	</style>
-  <script src="index.js"></script>
 </head>
 
 <body ng-app>
   <div class="container">
     <div class="hero-unit">
-      <!--<h1>ChatSafe</h1>
-				<br />-->
-      <img src="safechat_medium.png" class="logo" alt="logo SafeChat" />
+      <img src="img/safechat_medium.png" class="logo" alt="logo SafeChat" />
 			<p id="logo-text-overlay" class="text-warning">
           <span class="lto-left">Chat with</span> anyone, anywhere, securely
       </p>
       <div class="alert alert-danger">
-        Your Browser does not support ChatSafe
+        Your Browser does not support ChatSafe while javascript
       </div>
-      <h5><em>Simple encrypted instant messaging</em></h5><br />
+      <h5><em>Simple encrypted instant messaging</em></h5><br /><br />
+      <div class="info-required">: required field</div><br />
       <form class="input-append" id="new_chat_form">
         <fieldset>
           <label for="chat_name" class="required">Chat title:</label> <br />
@@ -132,17 +129,16 @@
           <label for="chat_pass">Chat password?</label><br />
           <input type="text" class="input-xlarge" placeholder="Optionaly pick a password for it" id="chat_pass" name="chat_pass" />
           <button id="btn_gen_pass" type="button" class="btn btn-warning btn-sm">Gen.</button>
-          <button id="btn_pass_x" type="button" class="btn btn-danger btn-sm">&times;</button><br /><br />
+          <button id="btn_pass_x" type="button" class="btn btn-danger btn-sm">&times;</button>
           <label for="chatter_name" class="required">Pseudo:</label><br />
           <input type="text" class="input-xlarge" placeholder="Pick a pseudo" id="chatter_name" name="chatter_name"
             required='required' />
-          <button id="btn_gen_user_name" type="button" class="btn btn-warning btn-sm">Generate</button><br /><br />
-          <div class="info-required">: required field</div><br />
+          <button id="btn_gen_user_name" type="button" class="btn btn-warning btn-sm">Generate</button>
+          <button type="submit" class="btn btn-primary">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display:none"></span>
+            <span>Create Chat</span>
+          </button>
         </fieldset>
-        <button type="submit" class="btn btn-primary">
-          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display:none"></span>
-          <span>Create Chat</span>
-        </button>
       </form>
     </div>
     <hr class="my-2">
@@ -172,7 +168,7 @@
             </li>
             <li>
               Send the address of the newly created chat to anyone you want to chat with. This address contains the
-              key to the chat, so keep it safe. I recommend using <a href="https://privnote.com/" target="_blank">privnote</a> to send
+              key to the chat, so keep it safe. I recommend using privnote at https://privnote.com/ to send
               the address.
             </li>
             <li>
@@ -193,8 +189,7 @@
           back to its original form.
         </p>
         <p>
-          All encryption is done using the <a href="https://github.com/mdp/gibberish-aes" target="_blank">Gibberish AES</a> library, so
-          it
+          All encryption is done using the Gibberish AES library, so it
           follows the 256 bit AES specification. Because all encryption is done in the browser, not even the ChatSafe
           server
           can read messages, as it does not have the encryption key.
@@ -223,17 +218,14 @@
       <div class="tab-pane fade" id="pills-who" role="tabpanel" aria-labelledby="pills-who-tab">
         <h2>Who Created ChatSafe?</h2>
         <p>
-          ChatSafe was created by
-          <a href="http://www.davidtimms.co.uk" target="_blank">David Timms</a>,
-          a student and web developer from Bristol, UK. If you have any questions or feedback about the site, send me a
-          message on
-          <a href="http://www.davidtimms.co.uk" target="_blank">my website</a>.
+          ChatSafe was created by David Timms,
+          a student and web developer from Bristol, UK.
         </p>
         <h2>Can I trust you?</h2>
         <p>
           You don't have to. ChatSafe is open source software, meaning anybody can
-          <a href="https://github.com/DavidTimms/ChatSafe" target="_blank">view the source code</a>, so you can check that it does what I
-          say it does.
+          view the source code, so you can check that it does what I
+          say it does: https://github.com/DavidTimms/ChatSafe
         </p>
       </div>
     </div>
