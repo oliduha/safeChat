@@ -70,14 +70,20 @@ a img {
 		margin-bottom: 10px;
 		font-weight: bold;
 		text-align: left;
-		clear: both;
+    clear: both;
+    display: block;
 		.is_me {
 			background-color: rgb(240, 240, 240);
 			border: 1px solid rgb(120, 120, 120);
 			border-radius: 3px;
 		}
 		li {
-			margin-right: 2px;
+      margin-right: 2px;
+      .avatar {
+        height: 24px;
+        border-radius: 12px;
+        margin-bottom: 5px;
+      }
 			a {
 				padding: 0 2px;
 			}
@@ -158,7 +164,11 @@ a img {
 	}
 	*/
 	button {
-    margin: 0px 5px 10px 5px;
+    margin: 5px 5px 10px 5px;
+    float: left;
+    img {
+      margin-bottom: 2px;
+    }
 	}
 }
 .messages-box {
@@ -237,9 +247,9 @@ a img {
 	}
 	.is_me {
 		.message-text, .sender, small {
-			@media screen and (max-width: $narrow) {
+			//@media screen and (max-width: $narrow) {
 				text-align: left;
-			}
+			//}
 		}
 	}
 	.icon-loading {
@@ -309,82 +319,102 @@ a img {
 	color: rgb(127, 74, 0) !important;
 }
 .color-null {
-  opacity: .75;
+	opacity: 0.75;
+	text-align: right;
+	background-color: #f7f7f7;
+}
+.messages-box {
+  .message.color-null {
+    .avatar, .sender{
+      float: right;
+      margin-left: 5px;
+    }
+    .message-text {
+      display: inline;
+    }
+  }
+}
+.messages-box {
+  .message.color-null.danger {
+    .avatar, .sender{
+      float: unset;
+    }
+  }
 }
 .blue {
-  background-color: BLue;
+  background-color:rgb(0,0,255);
 }
 .red {
-  background-color: Red;
+  background-color: rgb(255,0,0);
 }
 .yellow {
-  background-color: Yellow;
+  background-color: rgb(255,255,0);
 }
 .green {
-  background-color: Green;
+  background-color: rgb(0,128,0);
 }
 .purple {
-  background-color: Purple;
+  background-color: rgb(128,0,128);
 }
 .pink {
-  background-color: Pink;
+  background-color: rgb(255, 192, 203);
 }
 .maroon {
-  background-color: Maroon;
+  background-color: rgb(128, 0, 0);
 }
 .black {
-  background-color: Black;
+  background-color: rgb(0, 0, 0);
 }
 .magenta {
-  background-color: Magenta;
+  background-color: rgb(255, 0, 255);
 }
 .cyan {
-  background-color: Cyan;
+  background-color: rgb(0, 255, 255);
 }
 .aquamarine {
-  background-color: Aquamarine;
+  background-color: rgb(127, 255, 212);
 }
 .orange {
-  background-color: Orange;
+  background-color: rgb(255, 165, 0);
 }
 .indigo {
-  background-color: Indigo;
+  background-color: rgb(75, 0, 130);
 }
-.gray {
-  background-color: Gray;
+.lightslateblue {
+  background-color: rgb(115, 106, 255);
 }
-.silver {
-  background-color: Silver;
+.blueribbon {
+  background-color: rgb(48, 110, 255);
 }
 .olive {
-  background-color: Olive;
+  background-color: rgb(128, 128, 0);
 }
 .sienna {
-  background-color: Sienna;
+  background-color: rgb(160, 82, 45);
 }
 .brown {
-  background-color: Brown;
+  background-color: rgb(165, 42, 42);
 }
 .tan {
-  background-color: Tan;
+  background-color: rgb(210, 180, 140);
 }
 .navy {
-  background-color: Navy;
+  background-color: rgb(0, 0, 128);
 }
 .teal {
-  background-color: Teal;
+  background-color: rgb(0, 128, 128);
 }
 .lime {
-  background-color: Lime;
+  background-color: rgb(0, 255, 0);
 }
 .chartreuse {
-  background-color: Chartreuse;
+  background-color: rgb(127, 255, 0);
 }
 .lavender {
-  background-color: Lavender;
+  background-color: rgb(230, 230, 250);
 }
 .gold {
-  background-color: Gold;
+  background-color: rgb(255, 215, 0);
 }
 .danger {
   color: #721c24;

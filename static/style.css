@@ -74,6 +74,7 @@ a img {
   font-weight: bold;
   text-align: left;
   clear: both;
+  display: block;
 }
 .left-column .nav .is_me {
   background-color: #f0f0f0;
@@ -82,6 +83,11 @@ a img {
 }
 .left-column .nav li {
   margin-right: 2px;
+}
+.left-column .nav li .avatar {
+  height: 24px;
+  border-radius: 12px;
+  margin-bottom: 5px;
 }
 .left-column .nav li a {
   padding: 0 2px;
@@ -174,7 +180,11 @@ a img {
   text-overflow: ellipsis;
 }
 .title-bar button {
-  margin: 0px 5px 10px 5px;
+  margin: 5px 5px 10px 5px;
+  float: left;
+}
+.title-bar button img {
+  margin-bottom: 2px;
 }
 
 .messages-box {
@@ -252,10 +262,8 @@ a img {
 .messages-box .message .text-message.system {
   display: inline;
 }
-@media screen and (max-width: 767px) {
-  .messages-box .is_me .message-text, .messages-box .is_me .sender, .messages-box .is_me small {
-    text-align: left;
-  }
+.messages-box .is_me .message-text, .messages-box .is_me .sender, .messages-box .is_me small {
+  text-align: left;
 }
 .messages-box .icon-loading {
   width: 99%;
@@ -343,106 +351,120 @@ a img {
 
 .color-null {
   opacity: 0.75;
+  text-align: right;
+  background-color: #f7f7f7;
+}
+
+.messages-box .message.color-null .avatar, .messages-box .message.color-null .sender {
+  float: right;
+  margin-left: 5px;
+}
+.messages-box .message.color-null .message-text {
+  display: inline;
+}
+
+.messages-box .message.color-null.danger .avatar, .messages-box .message.color-null.danger .sender {
+  float: unset;
 }
 
 .blue {
-  background-color: BLue;
+  background-color: blue;
 }
 
 .red {
-  background-color: Red;
+  background-color: red;
 }
 
 .yellow {
-  background-color: Yellow;
+  background-color: yellow;
 }
 
 .green {
-  background-color: Green;
+  background-color: green;
 }
 
 .purple {
-  background-color: Purple;
+  background-color: purple;
 }
 
 .pink {
-  background-color: Pink;
+  background-color: pink;
 }
 
 .maroon {
-  background-color: Maroon;
+  background-color: maroon;
 }
 
 .black {
-  background-color: Black;
+  background-color: black;
 }
 
 .magenta {
-  background-color: Magenta;
+  background-color: fuchsia;
 }
 
 .cyan {
-  background-color: Cyan;
+  background-color: aqua;
 }
 
 .aquamarine {
-  background-color: Aquamarine;
+  background-color: aquamarine;
 }
 
 .orange {
-  background-color: Orange;
+  background-color: orange;
 }
 
 .indigo {
-  background-color: Indigo;
+  background-color: indigo;
 }
 
-.gray {
-  background-color: Gray;
+.lightslateblue {
+  background-color: #736aff;
 }
 
-.silver {
-  background-color: Silver;
+.blueribbon {
+  background-color: #306eff;
 }
 
 .olive {
-  background-color: Olive;
+  background-color: olive;
 }
 
 .sienna {
-  background-color: Sienna;
+  background-color: sienna;
 }
 
 .brown {
-  background-color: Brown;
+  background-color: brown;
 }
 
 .tan {
-  background-color: Tan;
+  background-color: tan;
 }
 
 .navy {
-  background-color: Navy;
+  background-color: navy;
 }
 
 .teal {
-  background-color: Teal;
+  background-color: teal;
 }
 
 .lime {
-  background-color: Lime;
+  background-color: lime;
 }
 
 .chartreuse {
-  background-color: Chartreuse;
+  background-color: chartreuse;
 }
 
 .lavender {
-  background-color: Lavender;
+  background-color: lavender;
 }
 
 .gold {
-  background-color: Gold;
+  background-color: gold;
 }
 
 .danger {

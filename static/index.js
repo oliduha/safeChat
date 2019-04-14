@@ -5,13 +5,15 @@
 
 /* jshint ignore:start */
 async function generateKey() {
-  var rbb = await sodium.randombytes_buf(16);
-  var res =  await sodium.to_hex(rbb);
-  return res;
+  await sodium.ready;
+  var rbb = sodium.randombytes_buf(16);
+  var res = sodium.to_hex(rbb);
+  return Promise.resolve(res);
 }
 async function gen_name() {
-  var rbb = await sodium.randombytes_buf(16);
-  var res = await sodium.to_hex(rbb).toString();
+  await sodium.ready;
+  var rbb = sodium.randombytes_buf(16);
+  var res = sodium.to_hex(rbb).toString();
   return Promise.resolve(res);
 }
 /* jshint ignore:end */
@@ -19,6 +21,7 @@ async function gen_name() {
 $(document).ready(function () {
   $('.alert').hide();
   var storage = window.sessionStorage;
+  var user = unGen();
   storage.removeItem('chatpass');
   storage.removeItem('chatuname');
   storage.removeItem('chatucol');
@@ -31,15 +34,13 @@ $(document).ready(function () {
       return;
     }
   );
-  $('#chatter_name').val(unGen());
-  // $('#chat_name').val(name);
-  // $('#chat_name').val(gen_name().then());
+  $('#chatter_name').val(user.ani);
   $('#btn_gen_name').click(function() {
     gen_name().then(
       result => $('#chat_name').val(result),
       error => function() {
         console.log('ERROR gen_name:', error);
-        $('.alert').html('Something went wrong during name generation... Please retry').fadeIn(250);
+        $('.alert').html('Something went wrong during name generation... Please retry or reload the page (press F5)').fadeIn(250);
         return;
       }
     );
@@ -50,24 +51,35 @@ $(document).ready(function () {
   $('#btn_pass_x').click(function() {
     $('#chat_pass').val('');
   });
-  $('#btn_gen_user_name').click(function() {
-    $('#chatter_name').val(unGen());
+  $('#btn_gen_user_name').click(function () {
+    user = unGen();
+    $('#chatter_name').val(user.ani);
   });
   $('#new_chat_form').submit(function (e) {
     e.preventDefault();
-    $('button[type="submit"] .spinner-border').show();
     var pw = '';
-    var chat_name = $('#chat_name').val()
+    var chat_name = $('#chat_name').val().trim()
       .split(' ').join('_')
       .split('.').join('_')
       .split('?').join('_')
       .split('&').join('_')
-      .split('/').join('_');
+      .split('/').join('_')
+      .split('<').join('_')
+      .split('>').join('_');
     var spw = $('#chat_pass').val();
-    var u_name = $('#chatter_name').val();
-    storage.setItem('chatuname', u_name);
-    storage.setItem('chatucol', u_name.split(' ')[0]);
-    storage.setItem('chatuani', u_name.split(' ')[1]);
+    var uname = $('#chatter_name').val().trim()
+      .split(' ').join('_')
+      .split('.').join('_')
+      .split('?').join('_')
+      .split('&').join('_')
+      .split('/').join('_')
+      .split('<').join('_')
+      .split('>').join('_');
+    $('button[type="submit"] .spinner-border').show();
+    storage.setItem('chatuname', uname);
+    if (!user) user = unGen();
+    storage.setItem('chatucol', user.col);
+    storage.setItem('chatuani', user.ani);
     // console.log('password value: (' + typeof spw +') ' + spw);
     if (spw && spw !== '') {
       pw = sodium.crypto_pwhash_str(
@@ -145,9 +157,8 @@ $(document).ready(function () {
   $('.info-links a').click(showSection); */
 });
 
-// eslint-disable-next-line no-unused-vars
 var pGen = function() {
-  var specials = '!@#$€%^&*()_+{}:"<>?\\|[];\',./`~';
+  var specials = '!@#$€%^&*()_+{}:"<>?\\|[];\',./~';
   var lowercase = 'abcdefghijklmnopqrstuvwxyz';
   var uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   var numbers = '0123456789';
@@ -203,25 +214,20 @@ var unGen = function () {
     'Giraffe', 'Cow', 'Shark', 'Horse', 'Duck',
     'Deer', 'Fox', 'Frog', 'Pig', 'Snake'
   ];
-  /*// eslint-disable-next-line no-unused-vars
-  var qualifs = [
-    'Dark', 'Angry', 'Happy', 'Sad', 'Wonderful',
-    'Awsome', 'Degenerated', 'Zombi', 'Slow', 'Flying',
-    'Migthy', 'Magic', 'Mad', 'Running', 'Speedy',
-    'Little', 'Big', 'Stupid', 'Bad', 'Nice'];*/
   var colors = [
-    'Blue', 'Red', 'Yellow', 'Green', 'Purple',
-    'Pink', 'Maroon', 'Black', 'Magenta', 'Cyan',
-    'Aquamarine', 'Orange', 'Indigo', 'Gray', 'Silver',
-    'Olive', 'Sienna', 'Brown', 'Tan', 'Navy',
-    'Teal', 'Lime', 'Chartreuse', 'Lavender', 'Gold'
+    // dark colors
+    'Blue', 'Red', 'Green', 'Purple', 'Olive',
+    'Maroon', 'Black', 'Magenta', 'Teal', 'Sienna',
+    'Indigo', 'LightSlateBlue', 'BlueRibbon', 'Brown', 'Navy',
+    // light colors
+    'Lime', 'Chartreuse', 'Lavender', 'Gold', 'Orange',
+    'Tan', 'Pink', 'Cyan', 'Aquamarine', 'Yellow'
   ];
 
-  /*var i = Math.floor(Math.random() * 20);
-  var res = qualifs[i];*/
   var i = Math.floor(Math.random() * 25);
-  var res = colors[i];
+  var col = colors[i];
   i = Math.floor(Math.random() * 25);
-  res += ' ' + animals[i];
+  var ani = animals[i];
+  var res = {ani: ani, col: col};
   return res;
 };
