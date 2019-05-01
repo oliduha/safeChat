@@ -218,7 +218,7 @@ function Chat($scope) {
         secure: true
       });
     } else {
-      socket = io.connect('http://' + window.location.hostname/* + ':' + (self.port || 8080)*/, {
+      socket = io.connect('https://' + window.location.hostname/* + ':' + (self.port || 8080)*/, {
         secure: true
       });
     }
