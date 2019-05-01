@@ -17,7 +17,7 @@ var ChatApp = function () {
 
   /********************************** */
   // set local to true for tests if NOT online !!!
-  self.local = true;
+  self.local = false;
   /********************************** */
 
   /**
