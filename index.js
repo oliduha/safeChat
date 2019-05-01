@@ -222,13 +222,13 @@ var ChatApp = function () {
         self.createStaticRoute('chat.html')(req, res);
       } else {
         res.status(302);
-        if (self.local) {
-          debug('redirecting to https://%s', req.headers.host);
-          res.setHeader('Location', 'https://' + req.headers.host);
-        } else {
-          debug('redirecting to http://%s', req.headers.host);
-          res.setHeader('Location', 'http://' + req.headers.host);
-        }
+        // if (self.local) {
+        debug('redirecting to https://%s', req.headers.host);
+        res.setHeader('Location', 'https://' + req.headers.host);
+        // } else {
+        //   debug('redirecting to http://%s', req.headers.host);
+        //   res.setHeader('Location', 'http://' + req.headers.host);
+        // }
         res.setHeader('Content-Type', 'text/html');
         var error_page = '<html><body style="';
         error_page += 'text-align: center; color: #444448; background-color: #EEEEF3; font-family: sans-serif';
