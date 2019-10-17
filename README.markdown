@@ -6,11 +6,7 @@ I've simply adapted it to work with lastest vesions of most libs.
 
 Update 02/22/2019: replaced gibberish by libsodium, added an optional password for creating a chat, alert messages...
 
-Deploying on netlify... Don't work: need to use Lambdas functions (some refactoring to do)
-
 oliduha
-
-[![Netlify Status](https://api.netlify.com/api/v1/badges/a775a210-9417-460a-9edb-948ec1db36a7/deploy-status)](https://app.netlify.com/sites/safechat/deploys)
 
 #####################################################################
 
