@@ -401,7 +401,7 @@ var ChatApp = function () {
   self.cnxCount = function(chatName) {
     if (chatName) {
       self.io.of('/').in(chatName).clients(function (error, clients) {
-        debug('connections in %s: %d', chatName, clients.length);
+        debug('connections in %s: %d', clients.chatName, clients.length);
         self.io.sockets.to(chatName).emit('count cnx', clients.length);
       });
       self.io.of('/').clients(function (error, clients) {
