@@ -189,10 +189,14 @@
           back to its original form.
         </p>
         <p>
-          All encryption is done using the Gibberish AES library, so it
-          follows the 256 bit AES specification. Because all encryption is done in the browser, not even the ChatSafe
-          server
-          can read messages, as it does not have the encryption key.
+          <s>
+            All encryption is done using the Gibberish AES library, so it
+            follows the 256 bit AES specification. Because all encryption is done in the browser, not even the ChatSafe
+            server
+            can read messages, as it does not have the encryption key.
+          </s>
+          Encryption and authentication is now done using libsodium library with the secretbot function witch use a 192 bit nounce.
+          Messages are end to end encrypted so not even the server can read their content.
         </p>
         <p>
           In case somebody does manage to get your chat URL, with the key to decrypt the messages, the lock feature can
