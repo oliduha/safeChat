@@ -2,9 +2,9 @@
 
 Project largely based on Tim's ChatSafe so following is his readme...
 
-I've simply adapted it to work with lastest vesions of most libs.
+I've mostly adapted it to work with lastest vesions of most libs.
 
-Update 02/22/2019: replaced gibberish by libsodium, added an optional password for creating a chat, alert messages...
+Update 02/22/2019: replaced gibberish by libsodium - secretbox (XChaCha20-Poly1305) - , added an optional password for creating a chat, alert messages, predefined icons and names...
 
 oliduha
 
