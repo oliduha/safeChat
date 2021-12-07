@@ -4,6 +4,8 @@ Project largely based on Tim's ChatSafe so following is his readme...
 
 I've mostly adapted it to work with lastest vesions of most libs.
 
+The app is deployed on Heroku: https://aqueous-spire-27960.herokuapp.com/
+
 Update 02/22/2019: replaced gibberish by libsodium - secretbox (XChaCha20-Poly1305) - , added an optional password for creating a chat, alert messages, predefined icons and names...
 
 oliduha
