@@ -965,35 +965,7 @@ function Chat($scope) {
     var socket = $scope.clientConnection();
     // console.log('$scope.clientConnection(): %O', $scope.clientConnection());
   }
-  /* else {
-    test();
-  }
-
-  function test() {
-		new $scope.Chatter({name: 'Dave'});
-		new $scope.Chatter({name: 'Rob'});
-		new $scope.Chatter({name: 'Dan'});
-		new $scope.Chatter({name: 'Matt'});
-
-		var mins_ago = function (mins) {
-			var time = new Date();
-			time.setMinutes(time.getMinutes() - mins);
-			return time;
-		};
-
-	    new $scope.newMessage('hello world', 'Dave', mins_ago(12));
-	    new $scope.newMessage('foo!', 'Rob', mins_ago(10));
-	    new $scope.newMessage('foo?', 'Dave', mins_ago(9));
-	    new $scope.newMessage('bar', 'Rob', mins_ago(9));
-	    new $scope.newMessage('humbug', 'Dave', mins_ago(8));
-	    new $scope.newMessage('Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et ', 'Ved Uttamchandani', mins_ago(8));
-	    new $scope.newMessage('Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.', 'Dave', mins_ago(6));
-	    new $scope.newMessage('Matt has joined the chat', undefined, mins_ago(5));
-	    new $scope.newMessage('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', 'Matt', mins_ago(4));
-	    new $scope.newMessage('lol TDD 4life', 'Rob', mins_ago(3));
-	    new $scope.newMessage('goodbye world', 'Dave', mins_ago(3));
-
-  }*/
+  
   return $scope;
 }
 // for Node require command
